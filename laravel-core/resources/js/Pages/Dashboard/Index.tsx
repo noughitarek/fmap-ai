@@ -5,12 +5,12 @@ import { PageProps } from '@/types';
 export default function Dashboard({ auth, menu }: PageProps) {
     return (
         <>
-            <Head title="Tableau de bord" />
+            <Head title="Dashboard" />
             
             <Webmaster
                 user={auth.user}
                 menu={menu}
-                breadcrumb={<li className="breadcrumb-item active" aria-current="page">Tableau de bord</li>}
+                breadcrumb={<li className="breadcrumb-item active" aria-current="page">Dashboard</li>}
             >
               <div className="grid grid-cols-12 gap-6">
                 <div className="col-span-12 2xl:col-span-9">

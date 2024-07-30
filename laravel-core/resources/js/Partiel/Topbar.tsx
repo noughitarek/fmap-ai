@@ -27,7 +27,7 @@ const Topbar: React.FC<TopbarProps> = ({ breadcrumb, user }) => {
         <div className="top-bar -mx-4 px-4 md:mx-0 md:px-0">
             <nav aria-label="breadcrumb" className="mr-auto hidden sm:flex">
                 <ol className="breadcrumb">
-                    <li className="breadcrumb-item"><a href={route('dashboard')}>Inventaire</a></li>
+                    <li className="breadcrumb-item"><a href={route('dashboard')}>FMAP</a></li>
                     {breadcrumb}
                 </ol>
             </nav>

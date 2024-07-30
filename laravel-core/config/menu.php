@@ -11,7 +11,7 @@ return array(
     array(
         "type" => "link",
         "content" => "Accounts",
-        "active_when" => ["App\Http\Controllers\AccountController@index"],
+        "active_when" => ["App\Http\Controllers\AccountController#", "App\Http\Controllers\AccountsGroupController#"],
         "route" => "/accounts",
         "icon" => array("type" => "lucide", "content" => "Facebook"),
     ),

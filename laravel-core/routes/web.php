@@ -4,13 +4,32 @@ use Inertia\Inertia;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Application;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\AccountController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\AccountsGroupController;
 
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+
+    Route::prefix('accounts')->name('accounts.')->group(function() {
+        Route::prefix('groups')->name('groups.')->group(function() {
+            Route::get('/create', [AccountsGroupController::class, 'create'])->name('create');
+            Route::post('/create', [AccountsGroupController::class, 'store'])->name('store');
+            Route::get('/{group}/edit', [AccountsGroupController::class, 'edit'])->name('edit');
+            Route::put('/{group}/update', [AccountsGroupController::class, 'update'])->name('update');
+            Route::delete('/{group}/delete', [AccountsGroupController::class, 'destroy'])->name('destroy');
+        });
+    
+        Route::get('/', [AccountController::class, 'index'])->name('index');
+        Route::get('/create', [AccountController::class, 'create'])->name('create');
+        Route::post('/create', [AccountController::class, 'store'])->name('store');
+        Route::get('/{account}/edit', [AccountController::class, 'edit'])->name('edit');
+        Route::post('/{account}/update', [AccountController::class, 'update'])->name('update');
+        Route::delete('/{account}/delete', [AccountController::class, 'destroy'])->name('destroy');
+    });
 
     Route::prefix('users')->name('users.')->group(function() {
         Route::get('/', [UserController::class, 'index'])->name('index');

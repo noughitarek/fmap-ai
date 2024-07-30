@@ -1,6 +1,6 @@
 
 import React, {useEffect, useState, ChangeEvent} from 'react';
-import { PageProps, ProgramsGroup } from '@/types';
+import { PageProps, AccountsGroup } from '@/types';
 import { Head, Link } from '@inertiajs/react';
 import Page from '@/Base-components/Page';
 import Webmaster from '@/Layouts/Webmaster';
@@ -16,9 +16,9 @@ interface GroupFormData {
     description: string;
 }
 
-const EditProgramsGroup: React.FC<PageProps<{ group: ProgramsGroup}>> = ({ auth, group, menu }) => {
+const EditAccountsGroup: React.FC<PageProps<{ group: AccountsGroup}>> = ({ auth, group, menu }) => {
 
-    const programsGroupForm = useForm<GroupFormData>({
+    const accountsGroupForm = useForm<GroupFormData>({
         name: group.name,
         description: group.description
     });
@@ -26,22 +26,22 @@ const EditProgramsGroup: React.FC<PageProps<{ group: ProgramsGroup}>> = ({ auth,
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
-        if (name in programsGroupForm.data) {
-            programsGroupForm.setData(name as keyof GroupFormData, value);
+        if (name in accountsGroupForm.data) {
+            accountsGroupForm.setData(name as keyof GroupFormData, value);
         }
-        console.log(programsGroupForm.data)
+        console.log(accountsGroupForm.data)
     }
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setEditing(true);
         
-        programsGroupForm.put(route('programs.groups.update', {group: group}), {
+        accountsGroupForm.put(route('accounts.groups.update', {group: group}), {
             onSuccess: () => {
-                toast.success('Group of programs has been updated successfully');
-                router.get(route('programs.index'));
+                toast.success('Group of accounts has been updated successfully');
+                router.get(route('accounts.index'));
             },
             onError: (error) => {
-                toast.error('Error updating the group of programs');
+                toast.error('Error updating the group of accounts');
                 console.error('Error:', error);
             },
             onFinish: () => {
@@ -52,21 +52,21 @@ const EditProgramsGroup: React.FC<PageProps<{ group: ProgramsGroup}>> = ({ auth,
     
 
     return (<>
-        <Head title="Edit a group of programs" />
+        <Head title="Edit a group of accounts" />
         <Webmaster
             user={auth.user}
             menu={menu}
             breadcrumb={<>
-                <li className="breadcrumb-item" aria-current="page"><Link href={route('programs.index')}>Programs</Link></li>
+                <li className="breadcrumb-item" aria-current="page"><Link href={route('accounts.index')}>Accounts</Link></li>
                 <li className="breadcrumb-item" aria-current="page">Groups</li>
                 <li className="breadcrumb-item" aria-current="page">{group.name}</li>
                 <li className="breadcrumb-item active" aria-current="page">Edit</li>
             </>}
         >
-        <Page title="Editing a group of programs" header={<></>}>
+        <Page title="Editing a group of accounts" header={<></>}>
             <Grid title="Groups information">
-                <CustomTextInput title="Name" value={programsGroupForm.data.name} name='name' description='Enter the name of the group' required={true} handleChange={handleChange} instructions='Minimum 5 caracters'/>
-                <CustomTextarea title="Description" value={programsGroupForm.data.description} name='description' description='Enter the description of the group' required={false} handleChange={handleChange} instructions='Not required'/>
+                <CustomTextInput title="Name" value={accountsGroupForm.data.name} name='name' description='Enter the name of the group' required={true} handleChange={handleChange} instructions='Minimum 5 caracters'/>
+                <CustomTextarea title="Description" value={accountsGroupForm.data.description} name='description' description='Enter the description of the group' required={false} handleChange={handleChange} instructions='Not required'/>
                 <Button className="btn btn-primary" disabled={editing} onClick={handleSubmit}>{editing?"Editing":"Edit"}</Button>
             </Grid>
         </Page>
@@ -74,4 +74,4 @@ const EditProgramsGroup: React.FC<PageProps<{ group: ProgramsGroup}>> = ({ auth,
         </Webmaster>
     </>)
 }
-export default EditProgramsGroup;
+export default EditAccountsGroup;
