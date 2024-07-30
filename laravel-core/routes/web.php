@@ -3,25 +3,14 @@
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Application;
-use App\Http\Controllers\PageController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\ProgramController;
 use App\Http\Controllers\SettingController;
-use App\Http\Controllers\TemplateController;
 use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\RemarketingController;
-use App\Http\Controllers\ProgramsGroupController;
-use App\Http\Controllers\TemplatesGroupController;
-use App\Http\Controllers\RemarketingsCategoryController;
-
 
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
-
-
-
 
     Route::prefix('users')->name('users.')->group(function() {
         Route::get('/', [UserController::class, 'index'])->name('index');
@@ -31,7 +20,6 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/{user}/update', [UserController::class, 'update'])->name('update');
         Route::delete('/{user}/delete', [UserController::class, 'destroy'])->name('destroy');
     });
-
 
     Route::get('/settings', [SettingController::class, 'index'])->name('settings');
     Route::post('/settings', [SettingController::class, 'store'])->name('settings.save');

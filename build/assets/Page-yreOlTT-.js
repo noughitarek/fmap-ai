@@ -1,1 +1,0 @@
-import{j as e}from"./app-CJlbE-LF.js";const a=({title:s,header:r,children:t})=>e.jsxs(e.Fragment,{children:[e.jsx("h2",{className:"intro-y text-lg font-medium mt-10",children:s}),e.jsx("div",{className:"grid grid-cols-12 gap-6 mt-5",children:e.jsx("div",{className:"intro-y col-span-12 flex flex-wrap xl:flex-nowrap items-center mt-2",children:r})}),t]}),i=a;export{i as P};
