@@ -20,62 +20,8 @@ use App\Http\Controllers\RemarketingsCategoryController;
 Route::middleware(['auth'])->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 
-    Route::prefix('pages')->name('pages.')->group(function() {
-        Route::get('/', [PageController::class, 'index'])->name('index');
-        Route::get('{page}/conversations', [PageController::class, 'conversations'])->name('conversations');
-        Route::get('{page}/conversations/{conversation}/assignments', [PageController::class, 'assignments'])->name('assignments');
-    });
 
-    Route::prefix('templates')->name('templates.')->group(function() {
-        Route::prefix('groups')->name('groups.')->group(function() {
-            Route::get('/create', [TemplatesGroupController::class, 'create'])->name('create');
-            Route::post('/create', [TemplatesGroupController::class, 'store'])->name('store');
-            Route::get('/{group}/edit', [TemplatesGroupController::class, 'edit'])->name('edit');
-            Route::put('/{group}/update', [TemplatesGroupController::class, 'update'])->name('update');
-            Route::delete('/{group}/delete', [TemplatesGroupController::class, 'destroy'])->name('destroy');
-        });
-    
-        Route::get('/', [TemplateController::class, 'index'])->name('index');
-        Route::get('/create', [TemplateController::class, 'create'])->name('create');
-        Route::post('/create', [TemplateController::class, 'store'])->name('store');
-        Route::get('/{template}/edit', [TemplateController::class, 'edit'])->name('edit');
-        Route::post('/{template}/update', [TemplateController::class, 'update'])->name('update');
-        Route::delete('/{template}/delete', [TemplateController::class, 'destroy'])->name('destroy');
-    });
-    Route::prefix('programs')->name('programs.')->group(function() {
-        Route::prefix('groups')->name('groups.')->group(function() {
-            Route::get('/create', [ProgramsGroupController::class, 'create'])->name('create');
-            Route::post('/create', [ProgramsGroupController::class, 'store'])->name('store');
-            Route::get('/{group}/edit', [ProgramsGroupController::class, 'edit'])->name('edit');
-            Route::put('/{group}/update', [ProgramsGroupController::class, 'update'])->name('update');
-            Route::delete('/{group}/delete', [ProgramsGroupController::class, 'destroy'])->name('destroy');
-        });
-    
-        Route::get('/', [ProgramController::class, 'index'])->name('index');
-        Route::get('/create', [ProgramController::class, 'create'])->name('create');
-        Route::post('/create', [ProgramController::class, 'store'])->name('store');
-        Route::get('/{program}/edit', [ProgramController::class, 'edit'])->name('edit');
-        Route::post('/{program}/update', [ProgramController::class, 'update'])->name('update');
-        Route::delete('/{program}/delete', [ProgramController::class, 'destroy'])->name('destroy');
-    });
-    Route::prefix('remarketings')->name('remarketings.')->group(function() {
-        Route::prefix('categories')->name('categories.')->group(function() {
-            Route::get('/create', [RemarketingsCategoryController::class, 'create'])->name('create');
-            Route::post('/create', [RemarketingsCategoryController::class, 'store'])->name('store');
-            Route::get('/{category}/edit', [RemarketingsCategoryController::class, 'edit'])->name('edit');
-            Route::put('/{category}/update', [RemarketingsCategoryController::class, 'update'])->name('update');
-            Route::delete('/{category}/delete', [RemarketingsCategoryController::class, 'destroy'])->name('destroy');
-        });
-    
-        Route::get('/', [RemarketingController::class, 'index'])->name('index');
-        Route::get('/create', [RemarketingController::class, 'create'])->name('create');
-        Route::post('/create', [RemarketingController::class, 'store'])->name('store');
-        Route::get('/{remarketing}/edit', [RemarketingController::class, 'edit'])->name('edit');
-        Route::post('/{remarketing}/update', [RemarketingController::class, 'update'])->name('update');
-        Route::delete('/{remarketing}/delete', [RemarketingController::class, 'destroy'])->name('destroy');
 
-        Route::post('/{remarketing}/toggle-status', [RemarketingController::class, 'toggle_status'])->name('toggle.status');
-    });
 
     Route::prefix('users')->name('users.')->group(function() {
         Route::get('/', [UserController::class, 'index'])->name('index');
@@ -86,11 +32,7 @@ Route::middleware(['auth'])->group(function () {
         Route::delete('/{user}/delete', [UserController::class, 'destroy'])->name('destroy');
     });
 
-    Route::controller(SettingController::class)->group(function(){
-        Route::get('oauth/facebook', 'redirectToFacebook')->name('facebook_reconnect');
-        Route::get('oauth/facebook/callback', 'handleFacebookCallback')->withoutMiddleware('access_token');
-        Route::get('oauth/facebook/logout', 'logout');
-    });
+
     Route::get('/settings', [SettingController::class, 'index'])->name('settings');
     Route::post('/settings', [SettingController::class, 'store'])->name('settings.save');
 });
