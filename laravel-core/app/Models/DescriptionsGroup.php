@@ -5,12 +5,21 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Program extends Model
+class DescriptionsGroup extends Model
 {
     use HasFactory;
-    protected $fillable = ["name", "description", "group_id", "reuse_after", "total_used", "total_orders", "total_responses", "created_by", "updated_by", "deleted_by", "deleted_at"];
 
-
+    protected $fillable = [
+        "name",
+        "description",
+        "total_listings",
+        "total_messages",
+        "total_orders",
+        "created_by",
+        "updated_by",
+        "deleted_by",
+        "deleted_at"
+    ];
     public function createdBy()
     {
         return $this->belongsTo(User::class, 'created_by');
@@ -23,12 +32,8 @@ class Program extends Model
     {
         return $this->belongsTo(User::class, 'deleted_by');
     }
-    public function group()
+    public function descriptions()
     {
-        return $this->belongsTo(ProgramsGroup::class, 'group_id');
-    }
-    public function records()
-    {
-        return $this->hasMany(ProgramRecord::class, 'program_id')->orderby('id', 'asc');
+        return $this->hasMany(Description::class);
     }
 }

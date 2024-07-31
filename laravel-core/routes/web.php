@@ -11,6 +11,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PhotosGroupController;
 use App\Http\Controllers\TitlesGroupController;
 use App\Http\Controllers\AccountsGroupController;
+use App\Http\Controllers\DescriptionsGroupController;
 
 
 Route::middleware(['auth'])->group(function () {
@@ -47,6 +48,14 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/{group}/edit', [PhotosGroupController::class, 'edit'])->name('edit');
         Route::post('/{group}/update', [PhotosGroupController::class, 'update'])->name('update');
         Route::delete('/{group}/delete', [PhotosGroupController::class, 'destroy'])->name('destroy');
+    });
+    Route::prefix('descriptions')->name('descriptions.')->group(function() {
+        Route::get('/', [DescriptionsGroupController::class, 'index'])->name('index');
+        Route::get('/create', [DescriptionsGroupController::class, 'create'])->name('create');
+        Route::post('/create', [DescriptionsGroupController::class, 'store'])->name('store');
+        Route::get('/{group}/edit', [DescriptionsGroupController::class, 'edit'])->name('edit');
+        Route::post('/{group}/update', [DescriptionsGroupController::class, 'update'])->name('update');
+        Route::delete('/{group}/delete', [DescriptionsGroupController::class, 'destroy'])->name('destroy');
     });
 
     Route::prefix('users')->name('users.')->group(function() {

@@ -77,8 +77,8 @@ export interface TitlesGroup{
 export interface Title{
     id: number;
     title: string;
-    accounts_group_id: number;
-    accounts_group: TitlesGroup;
+    titles_group_id: number;
+    titles_group: TitlesGroup;
     total_listings: number;
     total_messages: number;
     total_orders: number;
@@ -103,8 +103,35 @@ export interface PhotosGroup{
 export interface Photo{
     id: number;
     photo: string;
-    accounts_group_id: number;
-    accounts_group: PhotosGroup;
+    photos_group_id: number;
+    photos_group: PhotosGroup;
+    total_listings: number;
+    total_messages: number;
+    total_orders: number;
+    created_at: Date;
+    updated_at: Date;
+}
+
+export interface DescriptionsGroup{
+    id: number;
+    name: string;
+    description: string;
+    total_listings: number;
+    total_messages: number;
+    total_orders: number;
+    string_descriptions: string[];
+    descriptions: Description[];
+    created_at: Date;
+    updated_at: Date;
+    created_by: User;
+    updated_by: User;
+}
+
+export interface Description{
+    id: number;
+    description: string;
+    descriptions_group_id: number;
+    descriptions_group: DescriptionsGroup;
     total_listings: number;
     total_messages: number;
     total_orders: number;

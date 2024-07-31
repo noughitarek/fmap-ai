@@ -33,8 +33,8 @@ return array(
     array(
         "type" => "link",
         "content" => "Descriptions",
-        "active_when" => ["App\Http\Controllers\PhotoController@index"],
-        "route" => "/photos",
+        "active_when" => ["App\Http\Controllers\DescriptionsGroupController#"],
+        "route" => "/descriptions",
         "icon" => array("type" => "lucide", "content" => "LayoutList"),
     ),
     array(
