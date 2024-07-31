@@ -15552,10 +15552,7 @@ html body{
 .mobile-menu{
     position: fixed;
     z-index: 60;
-    margin-left: -2rem;
-    margin-right: -2rem;
-    margin-top: -1.25rem;
-    margin-bottom: 1.5rem;
+    top: 0;
     width: 100%;
     border-bottom-width: 1px;
     border-color: rgb(255 255 255 / 0.08);

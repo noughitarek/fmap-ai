@@ -19,8 +19,8 @@ return array(
     array(
         "type" => "link",
         "content" => "Titles",
-        "active_when" => ["App\Http\Controllers\PhotoController@index"],
-        "route" => "/photos",
+        "active_when" => ["App\Http\Controllers\TitlesGroupController#"],
+        "route" => "/titles",
         "icon" => array("type" => "lucide", "content" => "Captions"),
     ),
     array(
