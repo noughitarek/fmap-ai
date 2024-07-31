@@ -26,7 +26,7 @@ return array(
     array(
         "type" => "link",
         "content" => "Photos",
-        "active_when" => ["App\Http\Controllers\PhotoController@index"],
+        "active_when" => ["App\Http\Controllers\PhotosGroupController#"],
         "route" => "/photos",
         "icon" => array("type" => "lucide", "content" => "Image"),
     ),

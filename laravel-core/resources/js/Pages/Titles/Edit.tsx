@@ -107,7 +107,7 @@ const EditTitle: React.FC<PageProps<{group: TitlesGroup}>> = ({auth, menu, group
                             onChange={(e) => handleTitleChange(index, e.target.value)}
                             value={title || ''}
                         />
-                        <div className="form-help text-right mt-2">Send after</div>
+                        <div className="form-help text-right mt-2">Title</div>
                     </div>
                     <div className="mt-3 xl:mt-0 ms-2">
                         <Button className='btn btn-primary' onClick={() => removeTitles(index)}>-</Button>

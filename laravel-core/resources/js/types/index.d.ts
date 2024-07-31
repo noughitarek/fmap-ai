@@ -85,3 +85,29 @@ export interface Title{
     created_at: Date;
     updated_at: Date;
 }
+export interface PhotosGroup{
+    id: number;
+    name: string;
+    description: string;
+    total_listings: number;
+    total_messages: number;
+    total_orders: number;
+    old_photos: string[];
+    photos: Photo[];
+    created_at: Date;
+    updated_at: Date;
+    created_by: User;
+    updated_by: User;
+}
+
+export interface Photo{
+    id: number;
+    photo: string;
+    accounts_group_id: number;
+    accounts_group: PhotosGroup;
+    total_listings: number;
+    total_messages: number;
+    total_orders: number;
+    created_at: Date;
+    updated_at: Date;
+}
