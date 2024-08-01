@@ -138,3 +138,52 @@ export interface Description{
     created_at: Date;
     updated_at: Date;
 }
+
+export interface PostingsCategory{
+    id: number;
+    name: string;
+    description: string;
+    total_listings: number;
+    total_messages: number;
+    total_orders: number;
+    postings: Posting[];
+    created_at: Date;
+    updated_at: Date;
+    created_by: User;
+    updated_by: User;
+}
+
+export interface Posting{
+    id: number;
+    name: string;
+    description: string;
+    posting_prices_numbers: number[];
+    posting_prices: PostingsPrices[];
+
+    postings_category: PostingsCategory;
+    postings_category_id: number;
+    accounts_group: AccountsGroup;
+    accounts_group_id: number;
+    titles_group: TitlesGroup;
+    titles_group_id: number;
+    photos_group: PhotosGroup;
+    photos_group_id: number;
+    descriptions_group: DescriptionsGroup;
+    descriptions_group_id : number;
+
+    total_listings: number;
+    total_messages: number;
+    total_orders: number;
+
+    is_active: number;
+
+    created_at: Date;
+    updated_at: Date;
+    created_by: User;
+    updated_by: User;
+}
+
+export interface PostingsPrices{
+    id: number;
+    price: number;
+}

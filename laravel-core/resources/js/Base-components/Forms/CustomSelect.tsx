@@ -41,7 +41,7 @@ const CustomSelect = <T extends Element>({ title, name, required, elements, desc
                     className="form-control"
                     onChange={handleChange}
                 >
-                    <option value={0}>Select the {title.toLowerCase()} from the list</option>
+                    <option value="">Select the {title.toLowerCase()} from the list</option>
                     {elements.map((element) => (
                         <option key={element.id} value={element.id}>
                             {element.name}

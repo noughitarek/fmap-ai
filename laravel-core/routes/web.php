@@ -5,12 +5,14 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Application;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AccountController;
+use App\Http\Controllers\PostingController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PhotosGroupController;
 use App\Http\Controllers\TitlesGroupController;
 use App\Http\Controllers\AccountsGroupController;
+use App\Http\Controllers\PostingsCategoryController;
 use App\Http\Controllers\DescriptionsGroupController;
 
 
@@ -56,6 +58,23 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/{group}/edit', [DescriptionsGroupController::class, 'edit'])->name('edit');
         Route::post('/{group}/update', [DescriptionsGroupController::class, 'update'])->name('update');
         Route::delete('/{group}/delete', [DescriptionsGroupController::class, 'destroy'])->name('destroy');
+    });
+
+    Route::prefix('postings')->name('postings.')->group(function() {
+        Route::prefix('categories')->name('categories.')->group(function() {
+            Route::get('/create', [PostingsCategoryController::class, 'create'])->name('create');
+            Route::post('/create', [PostingsCategoryController::class, 'store'])->name('store');
+            Route::get('/{category}/edit', [PostingsCategoryController::class, 'edit'])->name('edit');
+            Route::put('/{category}/update', [PostingsCategoryController::class, 'update'])->name('update');
+            Route::delete('/{category}/delete', [PostingsCategoryController::class, 'destroy'])->name('destroy');
+        });
+    
+        Route::get('/', [PostingController::class, 'index'])->name('index');
+        Route::get('/create', [PostingController::class, 'create'])->name('create');
+        Route::post('/create', [PostingController::class, 'store'])->name('store');
+        Route::get('/{posting}/edit', [PostingController::class, 'edit'])->name('edit');
+        Route::post('/{posting}/update', [PostingController::class, 'update'])->name('update');
+        Route::delete('/{posting}/delete', [PostingController::class, 'destroy'])->name('destroy');
     });
 
     Route::prefix('users')->name('users.')->group(function() {

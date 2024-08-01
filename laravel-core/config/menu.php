@@ -40,8 +40,8 @@ return array(
     array(
         "type" => "link",
         "content" => "Postings",
-        "active_when" => ["App\Http\Controllers\PostingController@index"],
-        "route" => "/photos",
+        "active_when" => ["App\Http\Controllers\PostingController#", "App\Http\Controllers\PostingsCategoryController#"],
+        "route" => "/postings",
         "icon" => array("type" => "lucide", "content" => "TvMinimalPlay"),
     ),
     array("type" => "divider"),
