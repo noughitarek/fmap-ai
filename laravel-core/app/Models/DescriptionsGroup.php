@@ -34,6 +34,9 @@ class DescriptionsGroup extends Model
     }
     public function descriptions()
     {
-        return $this->hasMany(Description::class);
+        return $this->hasMany(Description::class)
+        ->whereNull("deleted_at")
+        ->whereNull("deleted_by")
+        ->orderby('id', 'asc');
     }
 }

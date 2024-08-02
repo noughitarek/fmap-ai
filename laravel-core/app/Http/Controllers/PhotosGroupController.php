@@ -73,6 +73,8 @@ class PhotosGroupController extends Controller
                         Photo::create([
                             'photo' => $photo,
                             'photos_group_id' => $group->id,
+                            "created_by" => Auth::id(),
+                            "updated_by" => Auth::id(),
                         ]);
                     }
                 }
@@ -133,16 +135,42 @@ class PhotosGroupController extends Controller
             ]);
 
             if ($group) {
-                Photo::where('photos_group_id', $group->id)->delete();
-                
+
+                $existingPhotos = Photo::where('photos_group_id', $group->id)->pluck('id', 'photo')->toArray();
                 foreach($photosPaths as $photo) {
                     if (!empty($photo)) {
-                        Photo::create([
-                            'photo' => $photo,
-                            'photos_group_id' => $group->id,
-                        ]);
+                        if (array_key_exists($photo, $existingPhotos)) {
+
+                            Photo::where('photos_group_id', $group->id)
+                                ->where('photo', $photo)
+                                ->update([
+                                    'photo' => $photo,
+                                    "deleted_at" => null,
+                                    "deleted_by" => null,
+                                    'updated_at' => now(),
+                                    'updated_by' => Auth::user()->id,
+                                ]);
+                            unset($existingPhotos[$photo]);
+                        } else {
+                            
+                            Photo::create([
+                                'photo' => $photo,
+                                'photos_group_id' => $group->id,
+                                'created_by' => Auth::user()->id,
+                                'updated_by' => Auth::user()->id,
+                            ]);
+                        }
                     }
                 }
+                if (!empty($existingPhotos)) {
+                    Photo::where('photos_group_id', $group->id)
+                        ->whereIn('photo', array_keys($existingPhotos))
+                        ->update([
+                            "deleted_at" => now(),
+                            "deleted_by" => Auth::user()->id
+                        ]);
+                }
+                
                 DB::commit();
                 return redirect()->route('photos.index')->with('success', 'Group of photos updated successfully.');
             } else {
@@ -170,7 +198,10 @@ class PhotosGroupController extends Controller
             ]);
 
             if ($group) {
-                Photo::where('photos_group_id', $group->id)->delete();
+                Photo::where('photos_group_id', $group->id)->update([
+                    "deleted_at" => now(),
+                    "deleted_by" => Auth::user()->id
+                ]);
                 DB::commit();
                 return redirect()->route('photos.index')->with('success', 'Group of photos deleted successfully.');
             } else {

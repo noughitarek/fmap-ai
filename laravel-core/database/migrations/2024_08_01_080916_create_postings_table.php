@@ -18,6 +18,9 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->foreignId('postings_category_id')->constrained('postings_categories')->onDelete('cascade');
             
+            $table->integer('max_per_day')->default(120);
+            $table->integer('photo_per_listing')->default(1);
+
             $table->foreignId('accounts_group_id')->constrained('accounts_groups');
             $table->foreignId('titles_group_id')->constrained('titles_groups');
             $table->foreignId('photos_group_id')->constrained('photos_groups');

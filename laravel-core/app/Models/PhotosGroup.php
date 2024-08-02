@@ -34,6 +34,9 @@ class PhotosGroup extends Model
     }
     public function photos()
     {
-        return $this->hasMany(Photo::class);
+        return $this->hasMany(Photo::class)
+        ->whereNull("deleted_at")
+        ->whereNull("deleted_by")
+        ->orderby('id', 'asc');
     }
 }

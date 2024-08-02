@@ -14,6 +14,10 @@ class Photo extends Model
         'photos_group_id',
         'total_listings',
         'total_messages',
-        'total_orders'
+        'total_orders',
+        "created_by",
+        "updated_by",
+        "deleted_by",
+        "deleted_at"
     ];
 }

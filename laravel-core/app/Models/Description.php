@@ -14,5 +14,9 @@ class Description extends Model
         "total_listings",
         "total_messages",
         "total_orders",
+        "created_by",
+        "updated_by",
+        "deleted_by",
+        "deleted_at"
     ];
 }

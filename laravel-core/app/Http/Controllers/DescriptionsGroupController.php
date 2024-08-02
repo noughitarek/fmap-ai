@@ -64,6 +64,8 @@ class DescriptionsGroupController extends Controller
                         Description::create([
                             'description' => $description,
                             'descriptions_group_id' => $group->id,
+                            "created_by" => Auth::id(),
+                            "updated_by" => Auth::id(),
                         ]);
                     }
                 }
@@ -110,15 +112,41 @@ class DescriptionsGroupController extends Controller
             ]);
 
             if ($group) {
-                Description::where('descriptions_group_id', $group->id)->delete();
+                $inputDescriptions = $request->input('descriptions', []);
+                $existingDescriptions = Description::where('descriptions_group_id', $group->id)->pluck('id', 'description')->toArray();
                 
-                foreach($request->input('descriptions') as $description) {
+                foreach($inputDescriptions as $description) {
                     if (!empty($description)) {
-                        Description::create([
-                            'description' => $description,
-                            'descriptions_group_id' => $group->id,
-                        ]);
+                        if (array_key_exists($description, $existingDescriptions)) {
+
+                            Description::where('descriptions_group_id', $group->id)
+                                ->where('description', $description)
+                                ->update([
+                                    'description' => $description,
+                                    "deleted_at" => null,
+                                    "deleted_by" => null,
+                                    'updated_at' => now(),
+                                    'updated_by' => Auth::user()->id,
+                                ]);
+                            unset($existingDescriptions[$description]);
+                        } else {
+                            
+                            Description::create([
+                                'description' => $description,
+                                'descriptions_group_id' => $group->id,
+                                'created_by' => Auth::user()->id,
+                                'updated_by' => Auth::user()->id,
+                            ]);
+                        }
                     }
+                }
+                if (!empty($existingDescriptions)) {
+                    Description::where('descriptions_group_id', $group->id)
+                        ->whereIn('description', array_keys($existingDescriptions))
+                        ->update([
+                            "deleted_at" => now(),
+                            "deleted_by" => Auth::user()->id
+                        ]);
                 }
                 DB::commit();
                 return redirect()->route('descriptions.index')->with('success', 'Group of descriptions updated successfully.');
@@ -147,7 +175,11 @@ class DescriptionsGroupController extends Controller
             ]);
 
             if ($group) {
-                Description::where('descriptions_group_id', $group->id)->delete();
+                Description::where('descriptions_group_id', $group->id)
+                ->update([
+                    "deleted_at" => now(),
+                    "deleted_by" => Auth::user()->id
+                ]);;
                 DB::commit();
                 return redirect()->route('descriptions.index')->with('success', 'Group of descriptions deleted successfully.');
             } else {

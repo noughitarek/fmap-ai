@@ -12,10 +12,13 @@ import CustomTextInput from '@/Base-components/Forms/CustomTextInput';
 import CustomTextarea from '@/Base-components/Forms/CustomTextarea';
 import CustomSelect from '@/Base-components/Forms/CustomSelect';
 import CustomFileInput from '@/Base-components/Forms/CustomFileInput';
+import CustomNumber from '@/Base-components/Forms/CustomNumber';
 
 interface PostingFormData {
     name: string;
     description: string;
+    max_per_day: number;
+    photo_per_listing: number;
     postings_category_id: number;
     accounts_group_id: number;
     titles_group_id: number;
@@ -35,6 +38,8 @@ const EditPosting: React.FC<PageProps<{
     const postingForm = useForm<PostingFormData>({
         name: posting.name,
         description: posting.description,
+        max_per_day: posting.max_per_day,
+        photo_per_listing: posting.photo_per_listing,
         postings_category_id: posting.postings_category_id,
         accounts_group_id: posting.accounts_group_id,
         titles_group_id: posting.titles_group_id,
@@ -106,6 +111,8 @@ const EditPosting: React.FC<PageProps<{
                 <CustomTextInput title="Name" value={postingForm.data.name} name='name' description='Enter the name of the account' required={true} handleChange={handleChange} instructions='Minimum 5 caracters'/>
                 <CustomTextarea title="Description" value={postingForm.data.description} name='description' description='Enter the description of the account' required={false} handleChange={handleChange} instructions='Not required'/>
                 <CustomSelect title="Postings category" elements={categories} value={postingForm.data.postings_category_id} name='postings_category_id' description='Enter the category you want to assing the account to' required={true} handleChange={handleChange} instructions='Required'/>
+                <CustomNumber title="Max per day" value={postingForm.data.max_per_day} name='max_per_day' description='Enter the name of the account' required={true} handleChange={handleChange} instructions='Minimum 5 caracters'/>
+                <CustomNumber title="Photo per listing" value={postingForm.data.photo_per_listing} name='photo_per_listing' description='Enter the name of the account' required={true} handleChange={handleChange} instructions='Minimum 5 caracters'/>
             </Grid>
 
             <Grid title="Posting assets">

@@ -34,6 +34,9 @@ class TitlesGroup extends Model
     }
     public function titles()
     {
-        return $this->hasMany(Title::class);
+        return $this->hasMany(Title::class)
+        ->whereNull("deleted_at")
+        ->whereNull("deleted_by")
+        ->orderby('id', 'asc');
     }
 }

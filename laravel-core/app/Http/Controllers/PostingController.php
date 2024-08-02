@@ -94,6 +94,9 @@ class PostingController extends Controller
                 'name' => $request->input('name'),
                 'description' => $request->input('description'),
                 
+                "max_per_day" => $request->input("max_per_day"),
+                "photo_per_listing" => $request->input("photo_per_listing"),
+
                 'postings_category_id' => $request->input('postings_category_id'),
 
                 'accounts_group_id' => $request->input('accounts_group_id'),
@@ -112,6 +115,8 @@ class PostingController extends Controller
                         PostingsPrices::create([
                             'price' => $price,
                             'posting_id' => $posting->id,
+                            'created_by' => Auth::user()->id,
+                            'updated_by' => Auth::user()->id,
                         ]);
                     }
                 }
@@ -188,6 +193,8 @@ class PostingController extends Controller
             $posting->update([
                 'name' => $request->input('name'),
                 'description' => $request->input('description'),
+                "max_per_day" => $request->input("max_per_day"),
+                "photo_per_listing" => $request->input("photo_per_listing"),
                 'postings_category_id' => $request->input('postings_category_id'),
                 'accounts_group_id' => $request->input('accounts_group_id'),
                 'titles_group_id' => $request->input('titles_group_id'),
@@ -196,16 +203,41 @@ class PostingController extends Controller
                 'updated_by' => Auth::user()->id,
             ]);
             if ($posting) {
-                PostingsPrices::where('posting_id', $posting->id)->delete();
+                $inputPrices = $request->input('posting_prices', []);
+                $existingPrices = PostingsPrices::where('posting_id', $posting->id)->pluck('id', 'price')->toArray();
 
-                foreach($request->input('posting_prices') as $price) {
+                foreach($inputPrices as $price) {
                     if (!empty($price)) {
-                        
-                        PostingsPrices::create([
-                            'price' => $price,
-                            'posting_id' => $posting->id,
-                        ]);
+                        if (array_key_exists($price, $existingPrices)) {
+
+                            PostingsPrices::where('posting_id', $posting->id)
+                                ->where('price', $price)
+                                ->update([
+                                    'price' => $price,
+                                    "deleted_at" => null,
+                                    "deleted_by" => null,
+                                    'updated_at' => now(),
+                                    'updated_by' => Auth::user()->id,
+                                ]);
+                            unset($existingPrices[$price]);
+                        } else {
+                            
+                            PostingsPrices::create([
+                                'price' => $price,
+                                'posting_id' => $posting->id,
+                                'created_by' => Auth::user()->id,
+                                'updated_by' => Auth::user()->id,
+                            ]);
+                        }
                     }
+                }
+                if (!empty($existingPrices)) {
+                    PostingsPrices::where('posting_id', $posting->id)
+                        ->whereIn('price', array_keys($existingPrices))
+                        ->update([
+                            "deleted_at" => now(),
+                            "deleted_by" => Auth::user()->id
+                        ]);
                 }
 
                 DB::commit();

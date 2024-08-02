@@ -64,6 +64,8 @@ class TitlesGroupController extends Controller
                         Title::create([
                             'title' => $title,
                             'titles_group_id' => $group->id,
+                            "created_by" => Auth::id(),
+                            "updated_by" => Auth::id(),
                         ]);
                     }
                 }
@@ -78,6 +80,8 @@ class TitlesGroupController extends Controller
             
             DB::rollBack();
             Log::error('Error creating TitlesGroup: ' . $e->getMessage());
+            print_r($e->getMessage());
+            exit;
             return redirect()->back()->with('error', 'An error occurred while creating the group of titles.');
         }
     }
@@ -110,15 +114,41 @@ class TitlesGroupController extends Controller
             ]);
 
             if ($group) {
-                Title::where('titles_group_id', $group->id)->delete();
+                $inputTitles = $request->input('titles', []);
+                $existingTitles = Title::where('titles_group_id', $group->id)->pluck('id', 'title')->toArray();
                 
-                foreach($request->input('titles') as $title) {
+                foreach($inputTitles as $title) {
                     if (!empty($title)) {
-                        Title::create([
-                            'title' => $title,
-                            'titles_group_id' => $group->id,
-                        ]);
+                        if (array_key_exists($title, $existingTitles)) {
+
+                            Title::where('titles_group_id', $group->id)
+                                ->where('title', $title)
+                                ->update([
+                                    'title' => $title,
+                                    "deleted_at" => null,
+                                    "deleted_by" => null,
+                                    'updated_at' => now(),
+                                    'updated_by' => Auth::user()->id,
+                                ]);
+                            unset($existingTitles[$title]);
+                        } else {
+                            
+                            Title::create([
+                                'title' => $title,
+                                'titles_group_id' => $group->id,
+                                'created_by' => Auth::user()->id,
+                                'updated_by' => Auth::user()->id,
+                            ]);
+                        }
                     }
+                }
+                if (!empty($existingTitles)) {
+                    Title::where('titles_group_id', $group->id)
+                        ->whereIn('title', array_keys($existingTitles))
+                        ->update([
+                            "deleted_at" => now(),
+                            "deleted_by" => Auth::user()->id
+                        ]);
                 }
                 DB::commit();
                 return redirect()->route('titles.index')->with('success', 'Group of titles updated successfully.');
@@ -147,7 +177,10 @@ class TitlesGroupController extends Controller
             ]);
 
             if ($group) {
-                Title::where('titles_group_id', $group->id)->delete();
+                Title::where('titles_group_id', $group->id)->update([
+                    "deleted_at" => now(),
+                    "deleted_by" => Auth::user()->id
+                ]);
                 DB::commit();
                 return redirect()->route('titles.index')->with('success', 'Group of titles deleted successfully.');
             } else {

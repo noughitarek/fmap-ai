@@ -5,15 +5,16 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class PostingsPrices extends Model
+class Listing extends Model
 {
     use HasFactory;
     protected $fillable = [
-        "price",
         "posting_id",
-        "created_by",
-        "updated_by",
-        "deleted_by",
-        "deleted_at"
+        "account_id",
+        "title_id",
+        "postings_price_id",
+        "description_id",
+        "post_at",
+        "posted_at",
     ];
 }

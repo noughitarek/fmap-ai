@@ -11,6 +11,8 @@ class Posting extends Model
     protected $fillable = [
         "name",
         "description",
+        "max_per_day",
+        "photo_per_listing",
         "postings_category_id",
         "accounts_group_id",
         "titles_group_id",
@@ -39,10 +41,29 @@ class Posting extends Model
     }
     public function postingPrices()
     {
-        return $this->hasMany(PostingsPrices::class)->orderby('id', 'asc');
+        return $this->hasMany(PostingsPrices::class)
+        ->whereNull("deleted_at")
+        ->whereNull("deleted_by")
+        ->orderby('id', 'asc');
     }
     public function postingsCategory()
     {
-        return $this->belongsTo(postingsCategory::class);
+        return $this->belongsTo(PostingsCategory::class);
+    }
+    public function accountsGroup()
+    {
+        return $this->belongsTo(AccountsGroup::class);
+    }
+    public function photosGroup()
+    {
+        return $this->belongsTo(PhotosGroup::class);
+    }
+    public function titlesGroup()
+    {
+        return $this->belongsTo(TitlesGroup::class);
+    }
+    public function descriptionsGroup()
+    {
+        return $this->belongsTo(DescriptionsGroup::class);
     }
 }

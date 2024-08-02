@@ -159,7 +159,8 @@ export interface Posting{
     description: string;
     posting_prices_numbers: number[];
     posting_prices: PostingsPrices[];
-
+    max_per_day: number;
+    photo_per_listing: number;
     postings_category: PostingsCategory;
     postings_category_id: number;
     accounts_group: AccountsGroup;

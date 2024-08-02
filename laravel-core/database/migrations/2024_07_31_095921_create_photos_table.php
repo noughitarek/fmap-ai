@@ -20,6 +20,11 @@ return new class extends Migration
             $table->integer('total_listings')->default(0);
             $table->integer('total_messages')->default(0);
             $table->integer('total_orders')->default(0);
+
+            $table->foreignId('created_by')->constrained('users');
+            $table->foreignId('updated_by')->nullable()->constrained('users');
+            $table->foreignId('deleted_by')->nullable()->constrained('users');
+            $table->timestamp('deleted_at')->nullable();
             
             $table->timestamps();
         });
