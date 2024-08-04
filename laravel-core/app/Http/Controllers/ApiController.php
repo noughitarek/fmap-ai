@@ -2,21 +2,20 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Listing;
 use App\Models\Posting;
 use Illuminate\Http\Request;
 
 class ApiController extends Controller
 {
     public function index(){
-        $postings = Posting::with("postingsCategory", "accountsGroup", "photosGroup", "descriptionsGroup", "postingPrices")
-        ->whereNull("deleted_at")
-        ->whereNull("deleted_by")
-        ->where("is_active", 1)
-        ->get()->toArray();
+        $postings = Listing::with("posting", "account", "title", "postingsPrice", "description", "photos.photo")
+        ->where("post_at", "<", now())
+        ->whereNull("posted_at")
+        ->orderBy("account_id", "desc")
+        ->get()
+        ->toArray();
 
-        print_r($postings);
-        exit;
-
-        return response()->json([]);
+        return response()->json($postings);
     }
 }

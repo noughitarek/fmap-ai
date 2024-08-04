@@ -54,6 +54,19 @@ class Posting extends Model
     {
         return $this->belongsTo(AccountsGroup::class);
     }
+
+    public function accounts()
+    {
+        
+        return $this->hasManyThrough(
+            AccountsGroup::class,  // The final model we want to access
+            Account::class,        // The intermediate model
+            'accounts_group_id',   // Foreign key on the intermediate model (Account)
+            'id',                  // Foreign key on the final model (AccountsGroup)
+            'accounts_group_id',   // Local key on this model (Posting)
+            'accounts_group_id'    // Local key on the intermediate model (Account)
+        );
+    }
     public function photosGroup()
     {
         return $this->belongsTo(PhotosGroup::class);

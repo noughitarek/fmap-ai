@@ -17,4 +17,37 @@ class Listing extends Model
         "post_at",
         "posted_at",
     ];
+    
+    public function posting()
+    {
+        return $this->belongsTo(Posting::class)
+        ->whereNull("deleted_at")
+        ->whereNull("deleted_by");
+    }
+    public function account()
+    {
+        return $this->belongsTo(Account::class)
+        ->whereNull("deleted_at")
+        ->whereNull("deleted_by");;
+    }
+    public function title()
+    {
+        return $this->belongsTo(Title::class)
+        ->whereNull("deleted_at")
+        ->whereNull("deleted_by");;
+    }
+    public function description()
+    {
+        return $this->belongsTo(Description::class)
+        ->whereNull("deleted_at")
+        ->whereNull("deleted_by");;
+    }
+    public function postingsPrice()
+    {
+        return $this->belongsTo(PostingsPrices::class, "postings_price_id");
+    }
+    public function photos()
+    {
+        return $this->hasMany(ListingsPhoto::class);
+    }
 }

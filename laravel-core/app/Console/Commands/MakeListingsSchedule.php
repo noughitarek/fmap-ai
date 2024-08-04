@@ -2,10 +2,14 @@
 
 namespace App\Console\Commands;
 
+use App\Models\Photo;
+use App\Models\Title;
 use App\Models\Account;
 use App\Models\Listing;
 use App\Models\Posting;
+use App\Models\Description;
 use App\Models\ListingsPhoto;
+use App\Models\PostingsPrices;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -34,10 +38,13 @@ class MakeListingsSchedule extends Command
         DB::beginTransaction();
         
         try{
-            $postings = Posting::whereNull("deleted_at")
+            $postings = Posting::with("accounts")
+            ->whereNull("deleted_at")
             ->whereNull("deleted_by")
             ->where("is_active", 1)
             ->get();
+            print_r($postings->toArray());
+            exit;
 
             foreach($postings as $posting){
 
@@ -62,9 +69,9 @@ class MakeListingsSchedule extends Command
                         $listing = Listing::create([
                             "posting_id" => $posting->id,
                             "account_id" => $account->id,
-                            "title_id" => $posting->titlesGroup->titles()->inRandomOrder()->first()->id,
-                            "postings_price_id" => $posting->postingPrices()->inRandomOrder()->first()->id,
-                            "description_id" => $posting->descriptionsGroup->descriptions()->inRandomOrder()->first()->id,
+                            "title_id" => Title::whereIn("id", $posting->titlesGroup->titles()->pluck("id"))->inRandomOrder()->first()->id,
+                            "postings_price_id" => PostingsPrices::whereIn("id", $posting->postingPrices()->pluck("id"))->inRandomOrder()->first()->id,
+                            "description_id" => Description::whereIn("id", $posting->descriptionsGroup->descriptions()->pluck("id"))->inRandomOrder()->first()->id,
                             "post_at" => now()->addMinutes(5),
                         ]);
                         
@@ -72,7 +79,7 @@ class MakeListingsSchedule extends Command
                             
                             for($i=0;$i<$posting->photo_per_listing;$i++){
                                 ListingsPhoto::create([
-                                    "photo_id" => $posting->photosGroup->photos()->inRandomOrder()->first()->id,
+                                    "photo_id" => Photo::whereIn("id", $posting->photosGroup->photos()->pluck("id"))->inRandomOrder()->first()->id,
                                     "listing_id" => $listing->id,
                                 ]);
                             }

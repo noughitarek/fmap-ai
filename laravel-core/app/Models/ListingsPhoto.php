@@ -12,4 +12,10 @@ class ListingsPhoto extends Model
         "photo_id",
         "listing_id"
     ];
+    public function photo()
+    {
+        return $this->belongsTo(Photo::class)
+        ->whereNull("deleted_at")
+        ->whereNull("deleted_by");
+    }
 }
