@@ -18,7 +18,7 @@ class ApiController extends Controller
 
         foreach($listings as &$listing){
             $listing["category"]["category"] = "Tools";
-            $listing["condition"]["condition"] = "New";
+            $listing["condition"]["condition"] = "Like New";
             $listing["availability"]["availability"] = "List as Single Item";
             $listing["tags"]["tags"] = "Test, test2,";
         }

@@ -69,26 +69,31 @@ class Bot:
         self.webDriver = webdriver.Chrome(options=chromeOptions)
     
     def login(self):
-        self.webDriver.get("https://www.facebook.com/profile")
-        print("Going to https://www.facebook.com/profile")
-        if(self.webDriver.current_url != "https://www.facebook.com/"):
+        try:
             print("Profile not logged in")
-            if self.webDriver.get("https://www.facebook.com"):
-                print("Going to https://www.facebook.com")
+            if self.webDriver.get("https://mbasic.facebook.com/"):
+                print("Going to https://mbasic.facebook.com/")
 
-            if self.type("email", self.currentAccount["username"], by=By.ID):
+            if self.type("email", self.currentAccount["username"], by=By.NAME):
                 print(self.currentAccount["username"]+": typed to screen")
 
-            if self.type("pass", self.currentAccount["password"], by=By.ID):
+            if self.type("pass", self.currentAccount["password"], by=By.NAME):
                 print(self.currentAccount["password"]+": typed to screen")
             
             if self.click("login", by=By.NAME):
                 print("Login button clicked")
 
             time.sleep(10)
-        else:
-            print("Profile already logged in")
+        except:
+            pass
 
+    def start(self):
+        while True:
+            try:
+                self.run_iter()
+                time.sleep(60)
+            except:
+                print("error")
 
     def run_iter(self):
         """Main iteration to fetch listings and handle them."""
@@ -133,7 +138,6 @@ class Bot:
             pictures_paths_str = "\n".join(photos_paths)
             xpath = "//input[@type='file'][@multiple]"
             self.type(xpath, pictures_paths_str)
-            time.sleep(random.uniform(0.8, 1.8))
             return True
         
         except:
@@ -144,7 +148,6 @@ class Bot:
         try:
             xpath = "//*[contains(@aria-label, 'Title')]//input"
             self.type(xpath, title["title"])
-            time.sleep(random.uniform(0.8, 1.8))
             return True
         except:
             raise Exception(f"Error adding title")
@@ -154,7 +157,6 @@ class Bot:
         try:
             xpath = "//*[contains(@aria-label, 'Price')]//input"
             self.type(xpath, price["price"])
-            time.sleep(random.uniform(0.8, 1.8))
             return True
         except:
             raise Exception(f"Error adding price")
@@ -164,9 +166,9 @@ class Bot:
         try:
             xpath = "//*[contains(@aria-label, 'Category')]//div/div"
             self.click(xpath)
+            time.sleep(random.uniform(0.8, 1.8))
             xpath = "//span/div/span[contains(., '"+category["category"]+"')]"
             self.click(xpath)
-            time.sleep(random.uniform(0.8, 1.8))
             return True
         except:
             raise Exception(f"Error adding category")
@@ -176,9 +178,9 @@ class Bot:
         try:
             xpath = "//label[contains(., 'Condition')]//div/div"
             self.click(xpath)
+            time.sleep(random.uniform(0.8, 1.8))
             xpath = "//span[contains(., '"+condition["condition"]+"')]"
             self.click(xpath)
-            time.sleep(random.uniform(0.8, 1.8))
             return True
         except:
             raise Exception(f"Error adding condition")
@@ -189,7 +191,6 @@ class Bot:
             xpath = "//*[contains(@aria-label, 'Description')]//textarea"
             if description is not None:
                 self.type(xpath, description["description"])
-            time.sleep(random.uniform(0.8, 1.8))
             return True
         except:
             raise Exception(f"Error adding description")
@@ -199,7 +200,7 @@ class Bot:
         try:
             xpath = "//label[contains(., 'Availability')]//div/div"
             self.click(xpath)
-            
+            time.sleep(random.uniform(0.8, 1.8))
             xpath = "//span[contains(., '"+availability["availability"]+"')]"
             self.click(xpath)
             time.sleep(random.uniform(0.8, 1.8))
@@ -213,7 +214,6 @@ class Bot:
             xpath = "//*[contains(@aria-label, 'Product tags')]//textarea"
             if tags is not None:
                 self.type(xpath, tags["tags"])
-            time.sleep(random.uniform(0.8, 1.8))
             return True
         except:
             raise Exception(f"Error adding tags")
@@ -229,10 +229,9 @@ class Bot:
             self.type(xpath, location, deleteBefore=True)
             xpath = "//ul[@role='listbox']/li[@role='option'][1]"
 
-            time.sleep(5)
+            time.sleep(random.uniform(0.8, 1.8))
             if not self.click(xpath) and iter < 100:
                 self.add_location(iter=iter+1)
-            time.sleep(random.uniform(0.8, 1.8))
             return location
         except:
             raise Exception(f"Error adding location")
@@ -392,4 +391,4 @@ class Bot:
             return False
 
 bot = Bot("fmap.ecoshark.org", https=True)
-bot.run_iter()
+bot.start()
