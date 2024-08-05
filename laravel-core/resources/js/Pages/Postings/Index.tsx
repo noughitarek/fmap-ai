@@ -3,7 +3,7 @@ import React, {useEffect, useState} from 'react';
 import { PageProps, PostingsCategory, Posting } from '@/types';
 import Page from '@/Base-components/Page';
 import Webmaster from '@/Layouts/Webmaster';
-import { Blocks, Calendar, CheckSquare, ChevronDown, Contact, DollarSign, Edit2, Facebook, Film, Hash, Headphones, Image, KeyRound, Layers, LayoutPanelTop, MessageSquare, MessageSquareText, ScrollText, Search, Trash, Trash2, User } from 'lucide-react';
+import { Blocks, Calendar, CheckSquare, ChevronDown, Contact, DollarSign, Edit2, Facebook, Film, Hash, Headphones, Image, KeyRound, Layers, LayoutPanelTop, MessageSquare, MessageSquareText, ScrollText, Search, Trash, Trash2, User, XSquare } from 'lucide-react';
 import { Button } from '@headlessui/react';
 import DeleteModal from '@/Components/DeleteModal';
 import { Head, Link, router, useForm } from '@inertiajs/react';
@@ -120,7 +120,17 @@ const PostingsIndex: React.FC<PageProps<{ categories: PostingsCategory[], from:n
         );
         setActivePostings(filteredPostings)
     };
-    
+    const togglePostingStatus = async (event: React.MouseEvent<HTMLDivElement>, postingId: number)  => {
+        event.preventDefault();
+        try {
+            await postingForm.post(route('postings.toggle.status', { posting: postingId }));
+            toast.success('Posting has been toggled successfully');
+            router.get(route('postings.index'));
+        } catch(error) {
+            toast.error('Error toggling the posting');
+            console.error('Error details:', error);
+        }
+    }
     return (<>
         <Head title="Postings" />
         <Webmaster
@@ -247,6 +257,17 @@ const PostingsIndex: React.FC<PageProps<{ categories: PostingsCategory[], from:n
                                                 })}
                                             </span>
                                         </div>
+                                    </td>
+                                    <td className="w-40">
+                                    { Number(posting.is_active) === 0 ? (
+                                        <div className="flex items-center justify-center text-danger" onClick={(event)=>togglePostingStatus(event, posting.id)}>
+                                            <XSquare className="w-4 h-4 mr-2" /> Inactive {posting.is_active}
+                                        </div>
+                                    ) : (
+                                        <div className="flex items-center justify-center text-success" onClick={(event)=>togglePostingStatus(event, posting.id)}>
+                                            <CheckSquare className="w-4 h-4 mr-2" /> Active {posting.is_active}
+                                        </div>
+                                    )}
                                     </td>
                                     <td>
                                         {posting.posting_prices.map(posting=>(

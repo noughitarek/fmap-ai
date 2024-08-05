@@ -270,4 +270,17 @@ class PostingController extends Controller
             return redirect()->back()->with('error', 'Posting could not be deleted.');
         }
     }
+
+    public function toggle_status(Posting $posting)
+    {
+        $isActive = !$posting->is_active;
+        $posting->is_active = $isActive;
+        $posting->save();
+
+        if ($posting->wasChanged()) {
+            return redirect()->route('postings.index')->with('success', 'Posting '.$isActive?'activated':'deactivated'.' successfully.');
+        } else {
+            return redirect()->back()->with('error', 'Posting could not be deleted.');
+        }
+    }
 }

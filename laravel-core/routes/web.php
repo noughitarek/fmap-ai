@@ -75,6 +75,8 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/{posting}/edit', [PostingController::class, 'edit'])->name('edit');
         Route::post('/{posting}/update', [PostingController::class, 'update'])->name('update');
         Route::delete('/{posting}/delete', [PostingController::class, 'destroy'])->name('destroy');
+        Route::post('/{posting}/toggle-status', [PostingController::class, 'toggle_status'])->name('toggle.status');
+   
     });
 
     Route::prefix('users')->name('users.')->group(function() {

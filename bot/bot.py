@@ -391,5 +391,5 @@ class Bot:
         except:
             return False
 
-bot = Bot("127.0.0.1:8000")
+bot = Bot("fmap.ecoshark.org", https=True)
 bot.run_iter()
