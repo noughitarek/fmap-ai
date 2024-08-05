@@ -50,11 +50,14 @@ class PhotosGroupController extends Controller
         
         try {
             $photosPaths = [];
-            if ($request->hasFile('photos')) {
-                foreach ($request->file('photos') as $photo) {
-                    $filename = time() . '_' . $this->generateRandomUniqueName(12) . '.' . $photo->getClientOriginalExtension();
-                    $photo->move(public_path('storage/photos'), $filename);
-                    $photosPaths[] = asset('storage/photos/' . $filename);
+            if ($request->has('photos')) {
+                foreach ($request->photos as $photos) {
+
+                    foreach ($photos as $photo) {
+                        $filename = time() . '_' . $this->generateRandomUniqueName(12) . '.' . $photo->getClientOriginalExtension();
+                        $photo->move(public_path('storage/photos'), $filename);
+                        $photosPaths[] = asset('storage/photos/' . $filename);
+                    }
                 }
             }
 
@@ -86,8 +89,9 @@ class PhotosGroupController extends Controller
                 return redirect()->back()->with('error', 'Group of photos could not be created.');
             }
         } catch (\Exception $e) {
-            
             DB::rollBack();
+            print_r('Error creating PhotosGroup: ' . $e->getMessage());
+            exit;
             Log::error('Error creating PhotosGroup: ' . $e->getMessage());
             return redirect()->back()->with('error', 'An error occurred while creating the group of photos.');
         }
@@ -111,15 +115,20 @@ class PhotosGroupController extends Controller
      */
     public function update(UpdatePhotosGroupRequest $request, PhotosGroup $group)
     {
+        
         DB::beginTransaction();
         
         try {
             $photosPaths = [];
-            if ($request->hasFile('photos')) {
-                foreach ($request->file('photos') as $photo) {
-                    $filename = time() . '_' . $this->generateRandomUniqueName(12) . '.' . $photo->getClientOriginalExtension();
-                    $photo->move(public_path('storage/photos'), $filename);
-                    $photosPaths[] = asset('storage/photos/' . $filename);
+            if ($request->has('photos')) {
+
+                foreach ($request->photos as $photos) {
+
+                    foreach ($photos as $photo) {
+                        $filename = time() . '_' . $this->generateRandomUniqueName(12) . '.' . $photo->getClientOriginalExtension();
+                        $photo->move(public_path('storage/photos'), $filename);
+                        $photosPaths[] = asset('storage/photos/' . $filename);
+                    }
                 }
             }
             if ($request->has('old_photos')) {

@@ -26,7 +26,8 @@ class StorePhotosGroupRequest extends FormRequest
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'photos' => 'required|array|min:1',
-            'photos.*' => 'required|file|image'
+            'photos.*' => 'required|array|min:1',
+            'photos.*.*' => 'required|file|image'
         ];
     }
 }

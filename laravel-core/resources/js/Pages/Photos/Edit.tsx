@@ -13,7 +13,7 @@ interface PhotosGroupForm{
     name: string;
     description: string;
     old_photos: string[];
-    photos: File[];
+    photos: File[][];
 }
 
 const EditPhoto: React.FC<PageProps<{group: PhotosGroup}>> = ({auth, menu, group}) => {
@@ -27,15 +27,17 @@ const EditPhoto: React.FC<PageProps<{group: PhotosGroup}>> = ({auth, menu, group
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
         const { name, type, value, files } = e.target as HTMLInputElement;
-        if (type === 'file') {
-            if(files){
-                const newFiles = Array.from(files);
-                photosGroupForm.setData('photos', newFiles);
-            }
+        if (type === 'file' && files) {
+            const newFiles = Array.from(files);
+            photosGroupForm.setData((prevData: PhotosGroupForm) => {
+                const updatedPhotos = [...prevData.photos];
+                updatedPhotos[parseInt(name)] = newFiles;
+                return { ...prevData, photos: updatedPhotos };
+            });
         } else {
             photosGroupForm.setData(name as keyof PhotosGroupForm, value);
         }
-    }
+    };
 
     const handleSubmit = async (e: React.FormEvent) => {
         console.log(photosGroupForm.data)
@@ -62,12 +64,12 @@ const EditPhoto: React.FC<PageProps<{group: PhotosGroup}>> = ({auth, menu, group
 
     const morePhotos: React.MouseEventHandler<HTMLButtonElement> = (e) => {
         e.preventDefault();
-        const emptyFile = new File([""], "emptyfile.jpg", { type: "image/jpeg" });
         photosGroupForm.setData(prevData => ({
             ...prevData,
-            photos: [...prevData.photos, emptyFile]
+            photos: [...prevData.photos, []]
         }));
-    }
+    };
+
     const removePhotos = (index: number) => {
         photosGroupForm.setData(prevData => ({
             ...prevData,
@@ -80,9 +82,9 @@ const EditPhoto: React.FC<PageProps<{group: PhotosGroup}>> = ({auth, menu, group
             old_photos: prevData.old_photos.filter((_, i) => i !== index),
         }));
     };
-    const handlePhotoChange = (index: number, value: File) => {
+    const handlePhotoChange = (index: number, files: FileList) => {
         const updatedPhotos = [...photosGroupForm.data.photos];
-        updatedPhotos[index] = value;
+        updatedPhotos[index] = Array.from(files);
         photosGroupForm.setData('photos', updatedPhotos);
     };
     const moreButton = (<Button className="btn btn-primary" onClick={morePhotos}>More</Button>)
@@ -153,11 +155,11 @@ const EditPhoto: React.FC<PageProps<{group: PhotosGroup}>> = ({auth, menu, group
                                 required
                                 className="form-control"
                                 onChange={(e) => {
-                                    if (e.target.files && e.target.files[0]) {
-                                        const file = e.target.files[0];
-                                        handlePhotoChange(index, file);
+                                    if (e.target.files) {
+                                        handlePhotoChange(index, e.target.files);
                                     }
                                 }}
+                                multiple={true}
                             />
                         </div>
                     </div>

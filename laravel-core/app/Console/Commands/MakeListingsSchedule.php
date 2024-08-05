@@ -43,9 +43,7 @@ class MakeListingsSchedule extends Command
             ->whereNull("deleted_by")
             ->where("is_active", 1)
             ->get();
-            print_r($postings->toArray());
-            exit;
-
+            
             foreach($postings as $posting){
 
                 foreach($posting->accountsGroup->accounts as $account){
@@ -71,7 +69,7 @@ class MakeListingsSchedule extends Command
                             "account_id" => $account->id,
                             "title_id" => Title::whereIn("id", $posting->titlesGroup->titles()->pluck("id"))->inRandomOrder()->first()->id,
                             "postings_price_id" => PostingsPrices::whereIn("id", $posting->postingPrices()->pluck("id"))->inRandomOrder()->first()->id,
-                            "description_id" => Description::whereIn("id", $posting->descriptionsGroup->descriptions()->pluck("id"))->inRandomOrder()->first()->id,
+                            "description_id" => $posting->descriptionsGroup?Description::whereIn("id", $posting->descriptionsGroup->descriptions()->pluck("id"))->inRandomOrder()->first()->id:null,
                             "post_at" => now()->addMinutes(5),
                         ]);
                         
