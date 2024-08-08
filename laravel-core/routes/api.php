@@ -6,5 +6,7 @@ use App\Http\Controllers\ApiController;
 
 Route::prefix('v1')->group(function () {
     Route::get('/listings/get', [ApiController::class, 'get_listings'])->name('get_listings');
-    Route::post('/listings/{listing}', [ApiController::class, 'change_status'])->name('change_status');
+    
+    Route::get('/listings/{listing}/published', [ApiController::class, 'published'])->name('published');
+    Route::get('/listings/{listing}/unpublished', [ApiController::class, 'published'])->name('unpublished');
 });

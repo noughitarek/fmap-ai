@@ -27,31 +27,28 @@ class ApiController extends Controller
         ->header('Content-Type', 'application/json; charset=utf-8');
     }
 
-    public function change_status(Listing $listing, Request $request){
+    public function published(Listing $listing){
         $listing = Listing::with("posting", "account", "title", "postingsPrice", "description", "photos.photo")
         ->find($listing->id);
-        if($request->state == "published")
-        {
-            $listing->posted_at = now();
-            if ($listing->posting) {
-                $listing->posting->increment('total_listings');
-            }
-            if ($listing->account) {
-                $listing->account->increment('total_listings');
-            }
-            if ($listing->title) {
-                $listing->title->increment('total_listings');
-            }
-            if ($listing->description) {
-                $listing->description->increment('total_listings');
-            }
-            foreach ($listing->photos as $photo) {
-                if ($photo->photo) {
-                    $photo->photo->increment('total_listings');
-                }
-            }
-            $listing->save();
+        $listing->posted_at = now();
+        if ($listing->posting) {
+            $listing->posting->increment('total_listings');
         }
+        if ($listing->account) {
+            $listing->account->increment('total_listings');
+        }
+        if ($listing->title) {
+            $listing->title->increment('total_listings');
+        }
+        if ($listing->description) {
+            $listing->description->increment('total_listings');
+        }
+        foreach ($listing->photos as $photo) {
+            if ($photo->photo) {
+                $photo->photo->increment('total_listings');
+            }
+        }
+        $listing->save();
         return response()->json(['status' => 'success', 'message' => 'Listing status updated successfully']);
     }
 }

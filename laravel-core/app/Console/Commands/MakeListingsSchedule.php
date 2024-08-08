@@ -76,10 +76,23 @@ class MakeListingsSchedule extends Command
                         if($listing){
                             
                             for($i=0;$i<$posting->photo_per_listing;$i++){
-                                ListingsPhoto::create([
-                                    "photo_id" => Photo::whereIn("id", $posting->photosGroup->photos()->pluck("id"))->inRandomOrder()->first()->id,
-                                    "listing_id" => $listing->id,
-                                ]);
+                                $postedPhotos = ListingsPhoto::whereIn('listing_id', Listing::where('account_id', $listing->account_id)->pluck('id'))->pluck('photo_id');
+                                $groupPhotos = $posting->photosGroup->photos()->pluck("id")
+                                print_r($postedPhotos);
+                                exit;
+                                $photo = Photo::whereIn("id", $groupPhotos)
+                                ->whereNotIn("id", $postedPhotos)   
+                                ->inRandomOrder()
+                                ->first()
+                                ->id;
+                                if($photo){
+                                    ListingsPhoto::create([
+                                        "photo_id" => $photo,
+                                        "listing_id" => $listing->id,
+                                    ]);
+                                }else{
+                                    continue;
+                                }
                             }
 
                             $stills = $posting->max_per_day - Listing::where("account_id", $account->id)

@@ -266,14 +266,10 @@ class Bot:
     def listing_published(self, listing, location):
         """Mark listing as published in the backend."""
 
-        url = f"{self.url}/listings/{listing['id']}/"
-        data = {
-            "state": "published",
-            "location": location
-        }
+        url = f"{self.url}/listings/{listing['id']}/published"
 
         try:
-            response = requests.post(url, data=data)
+            response = requests.get(url)
             response.raise_for_status()
             return True
         except requests.HTTPError as http_err:
@@ -286,13 +282,9 @@ class Bot:
          
     def listing_unpublished(self, listing, exception):
         """Mark listing as unpublished in the backend."""
-        url = f"{self.url}/listings/{listing['id']}/"
-        data = {
-            "state": "unpublished",
-            "exception": exception
-        }
+        url = f"{self.url}/listings/{listing['id']}/unpublished"
         try:
-            response = requests.post(url, json=data)
+            response = requests.post(url)
             response.raise_for_status()
             print(f"Listing {listing['id']} marked as unpublished.")
             return True
