@@ -77,7 +77,7 @@ class MakeListingsSchedule extends Command
                             
                             for($i=0;$i<$posting->photo_per_listing;$i++){
                                 $postedPhotos = ListingsPhoto::whereIn('listing_id', Listing::where('account_id', $listing->account_id)->pluck('id'))->pluck('photo_id');
-                                $groupPhotos = $posting->photosGroup->photos()->pluck("id")
+                                $groupPhotos = $posting->photosGroup->photos()->pluck("id");
                                 print_r($postedPhotos);
                                 exit;
                                 $photo = Photo::whereIn("id", $groupPhotos)
