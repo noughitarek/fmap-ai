@@ -28,52 +28,49 @@ class Bot:
     
     def run_iter(self):
         """Main iteration to fetch listings and handle them."""
-        self.get_new_listings()
-        if len(self.listings) > 0:
-            for listing in self.listings:
-                if not hasattr(self, 'currentAccount'):
-                    self.currentAccount = listing['account']
-                    self.start_driver()
-                    self.login()
-                else:
-                    if self.currentAccount != listing['account']:
-                        self.stop_driver()
-                        self.currentAccount = listing['account']
-                        self.start_driver()
-                        self.login()
-                self.create_listing(listing)
-            self.stop_driver()
-
-    def download_picture(self, url, download_path):
-        response = requests.get(url)
-        if response.status_code == 200:
-            with open(download_path, 'wb') as file:
-                file.write(response.content)
-        else:
-            raise Exception(f"Failed to download image from {url}")
-        
-    def add_pictures(self, pictures):
-        print("Adding pictures")
+        url = f'{self.url}/listings/get'
         try:
-            download_folder = "download/"
-            os.makedirs(download_folder, exist_ok=True)
-            
-            photos_paths = []
-            for picture in pictures:
-                photo_url = picture["photo"]["photo"]
-                unique_filename = f"{uuid.uuid4()}.jpg" 
-                download_path = os.path.join(download_folder, unique_filename)
-                self.download_picture(photo_url, download_path)
-                photos_paths.append(os.path.abspath(download_path))
-            
-            pictures_paths_str = "\n".join(photos_paths)
-            xpath = "//input[@type='file'][@multiple]"
-            self.type(xpath, pictures_paths_str)
-            return True
+            response = requests.get(url)
+            response.raise_for_status()
+            listings = response.json()
+            logging.info("Fetched new listings successfully.")
+        except requests.RequestException as e:
+            logging.error(f"Request failed: {e}")
+            return  
+        except ValueError:
+            logging.error("Response content is not in JSON format.")
+            logging.error(response.text.encode('utf-8').decode('utf-8'))
+            return  
         
-        except:
-            raise Exception(f"Error adding pictures")
+        if listings:
+            for listing in listings:
+                try:
+                    self.process_listing(listing)
+                except Exception as e:
+                    logging.error(f"Failed to process listing {listing.get('id', 'unknown')}: {e}")
+            if self.webDriver:
+                self.webDriver.stop_driver()
+        else:
+            logging.info("No new listings.")
 
+            
+    def process_listing(self, listing):
+        """Process individual listing and manage account switching."""
+        if self.currentAccount != listing['account']:
+            if self.webDriver:
+                self.webDriver.stop_driver()
+            self.currentAccount = listing['account']
+            self.webDriver = Driver(listing['account']["id"])
+            self.webDriver.start_driver()
+            self.facebook.login(listing['account']["username"], listing['account']["password"])
+        
+        self.facebook.create_listing(listing)
+
+<<<<<<< HEAD
+if __name__ == "__main__":
+    bot = Bot("127.0.0.1:8000", https=False)
+    bot.start()
+=======
     def add_title(self, title):
         print("Adding title")
         try:
@@ -197,14 +194,10 @@ class Bot:
     def listing_published(self, listing, location):
         """Mark listing as published in the backend."""
 
-        url = f"{self.url}/listings/{listing['id']}/"
-        data = {
-            "state": "published",
-            "location": location
-        }
+        url = f"{self.url}/listings/{listing['id']}/published"
 
         try:
-            response = requests.post(url, data=data)
+            response = requests.get(url)
             response.raise_for_status()
             return True
         except requests.HTTPError as http_err:
@@ -217,13 +210,9 @@ class Bot:
          
     def listing_unpublished(self, listing, exception):
         """Mark listing as unpublished in the backend."""
-        url = f"{self.url}/listings/{listing['id']}/"
-        data = {
-            "state": "unpublished",
-            "exception": exception
-        }
+        url = f"{self.url}/listings/{listing['id']}/unpublished"
         try:
-            response = requests.post(url, json=data)
+            response = requests.post(url)
             response.raise_for_status()
             print(f"Listing {listing['id']} marked as unpublished.")
             return True
@@ -323,3 +312,4 @@ class Bot:
 
 bot = Bot("fmap.ecoshark.org", https=True)
 bot.start()
+>>>>>>> 484b1227fc7899f0a40c5ef8bfb2f97a1e058f5d
