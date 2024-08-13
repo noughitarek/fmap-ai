@@ -13,7 +13,7 @@ from selenium.webdriver.common.by import By
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 class Driver:
-    def __init__(self, accountID):
+    def __init__(self, accountID=None):
         self.accountID = accountID
         self.webDriver = None
 
@@ -55,20 +55,20 @@ class Driver:
             raise FileNotFoundError(f"Chromedriver not found at path: {chromedriver_path}")
         
         # Initialize the WebDriver
-        chromeService = ChromeService(executable_path=chromedriver_path)
-        self.webDriver = webdriver.Chrome(service=chromeService, options=chromeOptions)
+        #chromeService = ChromeService(executable_path=chromedriver_path)
+        self.webDriver = webdriver.Chrome( options=chromeOptions)
         logging.info("WebDriver started successfully.")
     
-    def download_picture(self, url, download_path):
-        """Download an image from a URL."""
+    def download_file(self, url, download_path):
+        """Download an file from a URL."""
         try:
             response = requests.get(url)
             response.raise_for_status()
             with open(download_path, 'wb') as file:
                 file.write(response.content)
-            logging.info(f"Image downloaded successfully from {url}")
+            logging.info(f"File downloaded successfully from {url}")
         except requests.exceptions.RequestException as e:
-            logging.error(f"Failed to download image: {e}")
+            logging.error(f"Failed to download file: {e}")
             raise
     
         

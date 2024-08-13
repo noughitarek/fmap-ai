@@ -19,6 +19,7 @@ interface PostingFormData {
     description: string;
     max_per_day: number;
     photo_per_listing: number;
+    expire_after: number;
     postings_category_id: number;
     accounts_group_id: number;
     titles_group_id: number;
@@ -40,6 +41,7 @@ const CreatePosting: React.FC<PageProps<{
         description: '',
         max_per_day: 120,
         photo_per_listing: 1,
+        expire_after: 0,
         postings_category_id: 0,
         accounts_group_id: 0,
         titles_group_id: 0,
@@ -112,6 +114,7 @@ const CreatePosting: React.FC<PageProps<{
                 <CustomSelect title="Postings category" elements={categories} value={postingForm.data.postings_category_id} name='postings_category_id' description='Enter the category you want to assing the account to' required={true} handleChange={handleChange} instructions='Required'/>
                 <CustomNumber title="Max per day" value={postingForm.data.max_per_day} name='max_per_day' description='Enter the name of the account' required={true} handleChange={handleChange} instructions='Minimum 5 caracters'/>
                 <CustomNumber title="Photo per listing" value={postingForm.data.photo_per_listing} name='photo_per_listing' description='Enter the name of the account' required={true} handleChange={handleChange} instructions='Minimum 5 caracters'/>
+                <CustomNumber title="Expire after" value={postingForm.data.expire_after} name='expire_after' description='Enter the expiration delay' required={true} handleChange={handleChange} instructions='In seconds'/>
             </Grid>
 
             <Grid title="Posting assets">

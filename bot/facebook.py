@@ -14,9 +14,10 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 
 class Facebook:
-    def __init__(self, url):
+    def __init__(self, url, driver):
         self.url = url
         self.currentLocationIndex = 0
+        self.driver = driver
 
         # Load locations from JSON file
         locations_file = os.path.join("data", "cities.json")
@@ -32,19 +33,17 @@ class Facebook:
         try:
             logging.info("Attempting to log in.")
             
-            if not self.webDriver.driver.get("https://mbasic.facebook.com/"):
-                logging.error("Failed to navigate to https://mbasic.facebook.com/")
-                return
+            self.driver.webDriver.get("https://mbasic.facebook.com/")
 
-            if not self.webDriver.type("email", username, by=By.NAME):
+            if not self.driver.type("email", username, by=By.NAME):
                 logging.error("Failed to type username.")
                 return
 
-            if not self.webDriver.type("pass", password, by=By.NAME):
+            if not self.driver.type("pass", password, by=By.NAME):
                 logging.error("Failed to type password.")
                 return
             
-            if not self.webDriver.click("login", by=By.NAME):
+            if not self.driver.click("login", by=By.NAME):
                 logging.error("Failed to click login button.")
                 return
 
@@ -59,7 +58,7 @@ class Facebook:
         """Add pictures to the listing."""
         try:
             logging.info("Adding pictures.")
-            download_folder = "download/"
+            download_folder = "download/photos"
             os.makedirs(download_folder, exist_ok=True)
             
             photos_paths = []
@@ -67,13 +66,13 @@ class Facebook:
                 photo_url = picture["photo"]["photo"]
                 unique_filename = f"{uuid.uuid4()}.jpg" 
                 download_path = os.path.join(download_folder, unique_filename)
-                self.download_picture(photo_url, download_path)
+                self.driver.download_file(photo_url, download_path)
                 photos_paths.append(os.path.abspath(download_path))
             
             pictures_paths_str = "\n".join(photos_paths)
             xpath = "//input[@type='file'][@multiple]"
             
-            if not self.webDriver.type(xpath, pictures_paths_str):
+            if not self.driver.type(xpath, pictures_paths_str):
                 logging.error("Failed to upload pictures.")
                 return False
             return True
@@ -87,7 +86,7 @@ class Facebook:
         try:
             logging.info("Adding title.")
             xpath = "//*[contains(@aria-label, 'Title')]//input"
-            if not self.webDriver.type(xpath, title["title"]):
+            if not self.driver.type(xpath, title["title"]):
                 logging.error("Failed to add title.")
                 return False
             return True
@@ -100,7 +99,7 @@ class Facebook:
         try:
             logging.info("Adding price.")
             xpath = "//*[contains(@aria-label, 'Price')]//input"
-            if not self.webDriver.type(xpath, price["price"]):
+            if not self.driver.type(xpath, price["price"]):
                 logging.error("Failed to add price.")
                 return False
             return True
@@ -113,13 +112,13 @@ class Facebook:
         try:
             logging.info("Adding category.")
             xpath = "//*[contains(@aria-label, 'Category')]//div/div"
-            if not self.webDriver.click(xpath):
+            if not self.driver.click(xpath):
                 logging.error("Failed to open category dropdown.")
                 return False
             
             time.sleep(random.uniform(0.8, 1.8))
             xpath = "//span/div/span[contains(., '"+category["category"]+"')]"
-            if not self.webDriver.click(xpath):
+            if not self.driver.click(xpath):
                 logging.error("Failed to select category.")
                 return False
             return True
@@ -132,13 +131,13 @@ class Facebook:
         try:
             logging.info("Adding condition.")
             xpath = "//label[contains(., 'Condition')]//div/div"
-            if not self.webDriver.click(xpath):
+            if not self.driver.click(xpath):
                 logging.error("Failed to open condition dropdown.")
                 return False
             
             time.sleep(random.uniform(0.8, 1.8))
             xpath = "//span[contains(., '"+condition["condition"]+"')]"
-            if not self.webDriver.click(xpath):
+            if not self.driver.click(xpath):
                 logging.error("Failed to select condition.")
                 return False
             return True
@@ -151,7 +150,7 @@ class Facebook:
         try:
             logging.info("Adding description.")
             xpath = "//*[contains(@aria-label, 'Description')]//textarea"
-            if description is not None and not self.webDriver.type(xpath, description["description"]):
+            if description is not None and not self.driver.type(xpath, description["description"]):
                 logging.error("Failed to add description.")
                 return False
             return True
@@ -164,13 +163,13 @@ class Facebook:
         try:
             logging.info("Adding availability.")
             xpath = "//label[contains(., 'Availability')]//div/div"
-            if not self.webDriver.click(xpath):
+            if not self.driver.click(xpath):
                 logging.error("Failed to open availability dropdown.")
                 return False
             
             time.sleep(random.uniform(0.8, 1.8))
             xpath = "//span[contains(., '"+availability["availability"]+"')]"
-            if not self.webDriver.click(xpath):
+            if not self.driver.click(xpath):
                 logging.error("Failed to select availability.")
                 return False
             time.sleep(random.uniform(0.8, 1.8))
@@ -184,7 +183,7 @@ class Facebook:
         try:
             logging.info("Adding tags.")
             xpath = "//*[contains(@aria-label, 'Product tags')]//textarea"
-            if tags is not None and not self.webDriver.type(xpath, tags["tags"]):
+            if tags is not None and not self.driver.type(xpath, tags["tags"]):
                 logging.error("Failed to add tags.")
                 return False
             return True
@@ -201,13 +200,13 @@ class Facebook:
             self.currentLocationIndex += 1
 
             xpath = "//label[contains(., 'Location')]//input"
-            if not self.webDriver.type(xpath, location_str, deleteBefore=True):
+            if not self.driver.type(xpath, location_str, deleteBefore=True):
                 logging.error("Failed to type location.")
                 return None
             
             xpath = "//ul[@role='listbox']/li[@role='option'][1]"
             time.sleep(random.uniform(0.8, 1.8))
-            if not self.webDriver.click(xpath) and iter < 100:
+            if not self.driver.click(xpath) and iter < 100:
                 return self.add_location(iter=iter + 1)
             
             return location_str
@@ -220,7 +219,7 @@ class Facebook:
         try:
             logging.info("Hiding from friends.")
             xpath = "(//input[@type='checkbox'])[2]"
-            if not self.webDriver.click(xpath):
+            if not self.driver.click(xpath):
                 logging.error("Failed to hide listing from friends.")
                 return False
             return True
@@ -233,7 +232,7 @@ class Facebook:
         try:
             logging.info("Clicking next button.")
             xpath = "//span[contains(., 'Next')]/span"
-            if not self.webDriver.click(xpath):
+            if not self.driver.click(xpath):
                 logging.error("Failed to click next button.")
                 return False
             return True
@@ -246,7 +245,7 @@ class Facebook:
         try:
             logging.info("Clicking publish button.")
             xpath = "//span[contains(., 'Publish')]/span"
-            if not self.webDriver.click(xpath):
+            if not self.driver.click(xpath):
                 logging.error("Failed to click publish button.")
                 return False
             return True
@@ -254,10 +253,25 @@ class Facebook:
             logging.error(f"Error clicking publish button: {e}")
             raise
 
+    def is_blocked(self):
+        element = self.driver.webDriver.find_elements(By.XPATH, "//span/span[contains(., 'OK')]")
+        if len(element)>0:
+            return True
+        else:
+            return False
+        
+    def limite_reached(self):
+        xpath = "/html/body/div[1]/div/div[1]/div/div[3]/div/div/div/div[1]/div[1]/div[1]/div/div[2]/div[1]/div[2]/div/div/div[2]/div/div/div/div/span/div/div/div[2]/div/div[1]/span/span/span"
+        element = self.driver.webDriver.find_elements(By.XPATH, xpath)
+        if len(element)>0:
+            return True
+        else:
+            return False
+        
     def listing_published(self, listing, location):
         """Mark listing as published in the backend."""
 
-        url = f"{self.url}/listings/{listing['id']}/"
+        url = f"{self.url}/listings/{listing['id']}/published"
         data = {
             "state": "published",
             "location": location
@@ -278,7 +292,7 @@ class Facebook:
          
     def listing_unpublished(self, listing, exception):
         """Mark listing as unpublished in the backend."""
-        url = f"{self.url}/listings/{listing['id']}/"
+        url = f"{self.url}/listings/{listing['id']}/unpublished"
         data = {
             "state": "unpublished",
             "exception": exception
@@ -295,11 +309,29 @@ class Facebook:
         except Exception as err:
             logging.error(f"An error occurred: {err}")
         return False
-
+    
+    def remove_listings(self, accountID):
+        self.driver.webDriver.get("https://www.facebook.com/"+accountID+"/allactivity?activity_history=false&category_key=MARKETPLACELISTINGS&manage_mode=false&should_load_landing_page=false")    
+        time.sleep(random.uniform(1.1, 1.9))
+        while True: 
+            time.sleep(random.uniform(random.uniform(0.1,0.4), random.uniform(0.5, 0.9)))
+            xpath = "/html/body/div[1]/div/div[1]/div/div[3]/div/div/div/div[1]/div[1]/div[2]/div/div/div/div/div/div[2]/div[2]/div/div[2]/div/i"
+            if self.driver.webDriver.click(xpath):
+                xpath = "/html/body/div[1]/div/div[1]/div/div[3]/div/div/div/div[2]/div/div/div[1]/div[1]/div/div/div/div/div/div/div[1]/div/div/div[2]/div/div/span"
+                time.sleep(random.uniform(random.uniform(0.1,0.2), random.uniform(0.5, 0.7)))   
+                self.driver.webDriver.click(xpath)
+                xpath = "/html/body/div[1]/div/div[1]/div/div[4]/div/div/div[1]/div/div[2]/div/div/div/div/div/div/div[3]/div/div/div/div/div[1]/div/div/div[1]/div/span/span"
+                time.sleep(random.uniform(random.uniform(0.1,0.3), random.uniform(0.5, 0.8)))  
+                self.driver.webDriver.click(xpath)
+            else:
+                break
 
     def create_listing(self, listing):
         """Create a listing."""
-        self.webDriver.driver.get("https://www.facebook.com/marketplace/create/item")
+        self.driver.webDriver.get("https://www.facebook.com/marketplace/create/item")
+        if(self.limite_reached()):
+            return
+        
         try:
             if not self.add_pictures(listing["photos"]):
                 raise Exception("Failed to add pictures")
@@ -340,6 +372,7 @@ class Facebook:
             
             if not self.listing_published(listing, location):
                 raise Exception("Failed to confirm listing publication")
+            
 
         except Exception as e:
             logging.error(f"Error creating listing: {e}")

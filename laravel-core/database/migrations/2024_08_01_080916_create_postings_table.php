@@ -26,6 +26,7 @@ return new class extends Migration
             $table->foreignId('photos_group_id')->constrained('photos_groups');
             $table->foreignId('descriptions_group_id')->nullable()->constrained('descriptions_groups');
             
+            $table->integer('expire_after')->default(0);
             $table->integer('total_listings')->default(0);
             $table->integer('total_messages')->default(0);
             $table->integer('total_orders')->default(0);

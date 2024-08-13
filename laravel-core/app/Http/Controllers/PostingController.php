@@ -96,6 +96,7 @@ class PostingController extends Controller
                 
                 "max_per_day" => $request->input("max_per_day"),
                 "photo_per_listing" => $request->input("photo_per_listing"),
+                "expire_after" => $request->input("photo_per_listing"),
 
                 'postings_category_id' => $request->input('postings_category_id'),
 
@@ -195,6 +196,7 @@ class PostingController extends Controller
                 'description' => $request->input('description'),
                 "max_per_day" => $request->input("max_per_day"),
                 "photo_per_listing" => $request->input("photo_per_listing"),
+                "expire_after" => $request->input("photo_per_listing"),
                 'postings_category_id' => $request->input('postings_category_id'),
                 'accounts_group_id' => $request->input('accounts_group_id'),
                 'titles_group_id' => $request->input('titles_group_id'),

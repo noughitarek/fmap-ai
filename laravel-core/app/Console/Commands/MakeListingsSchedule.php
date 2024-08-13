@@ -78,32 +78,23 @@ class MakeListingsSchedule extends Command
                             ]);  
                         }
                         if($listing){
-                            $photo = Photo::whereIn("id", $posting->photosGroup->photos()->pluck("id"))->inRandomOrder()->first();
                             for($i=0;$i<$posting->photo_per_listing;$i++){
-<<<<<<< HEAD
-                                if($photo)
-                                {
-                                    ListingsPhoto::create([
-                                        "photo_id" => $photo->id,
-                                        "listing_id" => $listing->id,
-                                    ]);
-=======
+
                                 $postedPhotos = ListingsPhoto::whereIn('listing_id', Listing::where('account_id', $listing->account_id)->pluck('id'))->pluck('photo_id');
                                 $groupPhotos = $posting->photosGroup->photos()->pluck("id");
 
                                 $photo = Photo::whereIn("id", $groupPhotos)
                                 ->whereNotIn("id", $postedPhotos)   
                                 ->inRandomOrder()
-                                ->first()
-                                ->id;
+                                ->first();
+
                                 if($photo){
                                     ListingsPhoto::create([
-                                        "photo_id" => $photo,
+                                        "photo_id" => $photo->id,
                                         "listing_id" => $listing->id,
                                     ]);
                                 }else{
                                     continue;
->>>>>>> 484b1227fc7899f0a40c5ef8bfb2f97a1e058f5d
                                 }
                             }
 

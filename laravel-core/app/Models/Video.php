@@ -14,6 +14,7 @@ class Video extends Model
         'total_listings',
         'total_messages',
         'total_orders',
+        "extracted_at",
         "created_by",
         "updated_by",
         "deleted_by",

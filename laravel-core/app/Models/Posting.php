@@ -18,6 +18,7 @@ class Posting extends Model
         "titles_group_id",
         "photos_group_id",
         "descriptions_group_id",
+        "expire_after",
         "total_listings",
         "total_messages",
         "total_orders",
