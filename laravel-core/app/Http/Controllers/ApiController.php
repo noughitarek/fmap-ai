@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Video;
 use App\Models\Listing;
 use App\Models\Posting;
 use Illuminate\Http\Request;
@@ -27,9 +28,22 @@ class ApiController extends Controller
         ->header('Content-Type', 'application/json; charset=utf-8');
     }
 
-    public function change_status(Listing $listing, Request $request){
+    public function get_videos()
+    {
+        $videos = Video::whereNull("extracted_at")
+        ->get()
+        ->toArray();
+        
+        return response()
+        ->json($videos)
+        ->header('Content-Type', 'application/json; charset=utf-8');
+    }
+
+    public function change_status(Listing $listing, Request $request)
+    {
         $listing = Listing::with("posting", "account", "title", "postingsPrice", "description", "photos.photo")
         ->find($listing->id);
+
         if($request->state == "published")
         {
             $listing->posted_at = now();

@@ -39,4 +39,11 @@ class PhotosGroup extends Model
         ->whereNull("deleted_by")
         ->orderby('id', 'asc');
     }
+    public function videos()
+    {
+        return $this->hasMany(Video::class)
+        ->whereNull("deleted_at")
+        ->whereNull("deleted_by")
+        ->orderby('id', 'asc');
+    }
 }

@@ -63,23 +63,30 @@ class MakeListingsSchedule extends Command
                     ->count();
                     
                     while($stills > 0){
-                        
-                        $listing = Listing::create([
-                            "posting_id" => $posting->id,
-                            "account_id" => $account->id,
-                            "title_id" => Title::whereIn("id", $posting->titlesGroup->titles()->pluck("id"))->inRandomOrder()->first()->id,
-                            "postings_price_id" => PostingsPrices::whereIn("id", $posting->postingPrices()->pluck("id"))->inRandomOrder()->first()->id,
-                            "description_id" => $posting->descriptionsGroup?Description::whereIn("id", $posting->descriptionsGroup->descriptions()->pluck("id"))->inRandomOrder()->first()->id:null,
-                            "post_at" => now()->addMinutes(5),
-                        ]);
-                        
+
+                        $title = Title::whereIn("id", $posting->titlesGroup->titles()->pluck("id"))->inRandomOrder()->first();
+                        $price = PostingsPrices::whereIn("id", $posting->postingPrices()->pluck("id"))->inRandomOrder()->first();
+                        if($title && $price)
+                        {
+                            $listing = Listing::create([
+                                "posting_id" => $posting->id,
+                                "account_id" => $account->id,
+                                "title_id" => $title->id,
+                                "postings_price_id" => $price->id,
+                                "description_id" => $posting->descriptionsGroup?Description::whereIn("id", $posting->descriptionsGroup->descriptions()->pluck("id"))->inRandomOrder()->first()->id:null,
+                                "post_at" => now()->addMinutes(5),
+                            ]);  
+                        }
                         if($listing){
-                            
+                            $photo = Photo::whereIn("id", $posting->photosGroup->photos()->pluck("id"))->inRandomOrder()->first();
                             for($i=0;$i<$posting->photo_per_listing;$i++){
-                                ListingsPhoto::create([
-                                    "photo_id" => Photo::whereIn("id", $posting->photosGroup->photos()->pluck("id"))->inRandomOrder()->first()->id,
-                                    "listing_id" => $listing->id,
-                                ]);
+                                if($photo)
+                                {
+                                    ListingsPhoto::create([
+                                        "photo_id" => $photo->id,
+                                        "listing_id" => $listing->id,
+                                    ]);
+                                }
                             }
 
                             $stills = $posting->max_per_day - Listing::where("account_id", $account->id)
@@ -94,6 +101,9 @@ class MakeListingsSchedule extends Command
                     }
                 }
             }
+
+
+            $listings = Listing::whereNotIn("id", ListingsPhoto::all()->pluck('listing_id'))->delete();
             DB::commit();
             return $this->info('Group of photos created successfully.');
         } catch (\Exception $e) {

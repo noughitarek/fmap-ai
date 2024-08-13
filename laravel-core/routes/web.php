@@ -47,6 +47,8 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/', [PhotosGroupController::class, 'index'])->name('index');
         Route::get('/create', [PhotosGroupController::class, 'create'])->name('create');
         Route::post('/create', [PhotosGroupController::class, 'store'])->name('store');
+        Route::get('/import', [PhotosGroupController::class, 'import'])->name('import');
+        Route::post('/import/save', [PhotosGroupController::class, 'import_save'])->name('import.save');
         Route::get('/{group}/edit', [PhotosGroupController::class, 'edit'])->name('edit');
         Route::post('/{group}/update', [PhotosGroupController::class, 'update'])->name('update');
         Route::delete('/{group}/delete', [PhotosGroupController::class, 'destroy'])->name('destroy');

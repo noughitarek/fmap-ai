@@ -25,8 +25,9 @@ class UpdatePhotosGroupRequest extends FormRequest
         return [
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'photos' => 'required_without:old_photos|array',
-            'photos.*' => 'nullable|file|image|mimes:jpeg,png,jpg,gif',
+            'photos' => 'required_without:old_photos|array|min:1',
+            'photos.*' => 'required|array|min:1',
+            'photos.*.*' => 'required|file|image',
             'old_photos' => 'required_without:photos|array',
             'old_photos.*' => 'nullable|string',
         ];

@@ -107,6 +107,7 @@ const PhotosIndex: React.FC<PageProps<{ groups: PhotosGroup[], from:number, to:n
                             </div>
                         </div>
                         <div className="w-full sm:w-auto flex">
+                        <Link href={route('photos.import')} className="btn btn-primary shadow-md mr-2">Import video</Link>
                         <Link href={route('photos.create')} className="btn btn-primary shadow-md mr-2">Create Group of Photos</Link>
                         </div>
                     </div>
@@ -116,6 +117,7 @@ const PhotosIndex: React.FC<PageProps<{ groups: PhotosGroup[], from:number, to:n
                                 <tr>
                                     <th className="whitespace-nowrap">#</th>
                                     <th className="whitespace-nowrap">Photos</th>
+                                    <th className="whitespace-nowrap">Videos</th>
                                     <th className="whitespace-nowrap">Created</th>
                                     <th className="whitespace-nowrap">Action</th>
                                 </tr>
@@ -142,16 +144,54 @@ const PhotosIndex: React.FC<PageProps<{ groups: PhotosGroup[], from:number, to:n
                                         </div>
                                     </td>
                                     <td>
-                                        {group.photos.map((photo, index)=>(
-                                        <div key={index} className="flex items-center">
-                                            <div className="w-10 h-10 flex-none image-fit rounded-full overflow-hidden zoom-in">
-                                                <img data-action="zoom" alt={photo.photo} src={photo.photo}/>
-                                            </div>
-                                            <a href={photo.photo} className='ms-2' target='_blank'>{photo.photo && photo.photo.length > 20 
-                                                ? photo.photo.substring(0, 20) + '...' 
-                                                : photo.photo}</a>
-                                        </div>
-                                        ))}
+                                        {group.photos.map((photo, index)=>
+                                        {
+                                            if(index<2)
+                                            {
+                                                return (
+                                                    <div key={index} className="flex items-center">
+                                                        <div className="w-10 h-10 flex-none image-fit rounded-full overflow-hidden zoom-in">
+                                                            <img data-action="zoom" alt={photo.photo} src={photo.photo}/>
+                                                        </div>
+                                                        <a href={photo.photo} className='ms-2' target='_blank'>{photo.photo && photo.photo.length > 20 
+                                                            ? photo.photo.substring(0, 20) + '...' 
+                                                            : photo.photo}</a>
+                                                    </div>)
+                                            }
+                                            else if (index==2)
+                                            {
+                                                return (<div key={index} className="flex items-center">
+                                                    {group.photos.length-2} More photos
+                                                </div>);
+                                            }
+                                        })}
+                                    </td>
+                                    <td>
+                                        {group.videos.map((video, index)=>
+                                        {
+                                            if(index<2)
+                                            {
+                                                return (
+                                                    <div key={index} className="flex items-center">
+                                                        <div className="w-10 h-10 flex-none image-fit rounded-full overflow-hidden zoom-in">
+                                                            <video width="40" height="40">
+                                                                <source src={video.video} type="video/mp4" />
+                                                                Your browser does not support the video tag.
+                                                            </video>
+                                                        </div>
+                                                        <a href={video.video} className='ms-2' target='_blank'>{video.video && video.video.length > 20 
+                                                            ? video.video.substring(0, 20) + '...' 
+                                                            : video.video}</a>
+                                                    </div>)
+                                            }
+                                            else if (index==2)
+                                            {
+                                                return (<div key={index} className="flex items-center">
+                                                    {group.photos.length-2} More video
+                                                </div>);
+                                            }
+                                        })}
+
                                     </td>
                                     <td>
                                         <div className="flex items-center">

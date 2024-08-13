@@ -4,11 +4,14 @@ namespace App\Http\Controllers;
 
 use Inertia\Inertia;
 use App\Models\Photo;
+use App\Models\Video;
 use App\Models\PhotosGroup;
+use App\Models\VideosGroup;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\StorePhotosGroupRequest;
 use App\Http\Requests\UpdatePhotosGroupRequest;
 
@@ -19,7 +22,7 @@ class PhotosGroupController extends Controller
      */
     public function index()
     {
-        $groups = PhotosGroup::with(["createdBy", "updatedBy", "deletedBy", 'photos'])
+        $groups = PhotosGroup::with(["createdBy", "updatedBy", "deletedBy", 'photos', 'videos'])
             ->whereNull('deleted_by')
             ->whereNull('deleted_at')
             ->orderBy('id', 'desc')
@@ -95,6 +98,66 @@ class PhotosGroupController extends Controller
             Log::error('Error creating PhotosGroup: ' . $e->getMessage());
             return redirect()->back()->with('error', 'An error occurred while creating the group of photos.');
         }
+    }
+
+    public function import()
+    {
+        return Inertia::render('Photos/Import');
+    }
+
+    public function import_save(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            $videosPaths = [];
+            if ($request->has('videos')) {
+                foreach ($request->videos as $videos) {
+
+                    foreach ($videos as $video) {
+                        $filename = time() . '_' . $this->generateRandomUniqueName(12) . '.' . $video->getClientOriginalExtension();
+                        $video->move(public_path('storage/videos'), $filename);
+                        $videosPaths[] = asset('storage/videos/' . $filename);
+                    }
+                }
+            }
+
+            $group = PhotosGroup::create([
+                'name' => $request->input('name'),
+                'description' => $request->input('description'),
+                "created_by" => Auth::id(),
+                "updated_by" => Auth::id(),
+            ]);
+
+            if ($group) {
+
+                foreach($videosPaths as $video) {
+                    if (!empty($video)) {
+                        
+                        Video::create([
+                            'video' => $video,
+                            'photos_group_id' => $group->id,
+                            "created_by" => Auth::id(),
+                            "updated_by" => Auth::id(),
+                        ]);
+                    }
+                }
+
+                DB::commit();
+                return redirect()->route('photos.index')->with('success', 'Group of videos created successfully.');
+            } else {
+                DB::rollBack();
+                return redirect()->back()->with('error', 'Group of videos could not be created.');
+            }
+        } catch (\Exception $e) {
+            DB::rollBack();
+            print_r('Error creating PhotosGroup: ' . $e->getMessage());
+            exit;
+            Log::error('Error creating PhotosGroup: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'An error occurred while creating the group of videos.');
+        }
+
+        print_r($request->all());
+        exit;
     }
 
     /**
@@ -208,6 +271,10 @@ class PhotosGroupController extends Controller
 
             if ($group) {
                 Photo::where('photos_group_id', $group->id)->update([
+                    "deleted_at" => now(),
+                    "deleted_by" => Auth::user()->id
+                ]);
+                Video::where('photos_group_id', $group->id)->update([
                     "deleted_at" => now(),
                     "deleted_by" => Auth::user()->id
                 ]);

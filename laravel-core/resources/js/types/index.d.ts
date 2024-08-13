@@ -94,6 +94,7 @@ export interface PhotosGroup{
     total_orders: number;
     old_photos: string[];
     photos: Photo[];
+    videos: Video[];
     created_at: Date;
     updated_at: Date;
     created_by: User;
@@ -103,6 +104,18 @@ export interface PhotosGroup{
 export interface Photo{
     id: number;
     photo: string;
+    photos_group_id: number;
+    photos_group: PhotosGroup;
+    total_listings: number;
+    total_messages: number;
+    total_orders: number;
+    created_at: Date;
+    updated_at: Date;
+}
+
+export interface Video{
+    id: number;
+    video: string;
     photos_group_id: number;
     photos_group: PhotosGroup;
     total_listings: number;
