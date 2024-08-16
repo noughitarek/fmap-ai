@@ -9,4 +9,8 @@ class Commune extends Model
 {
     use HasFactory;
     protected $fillable = ['id', 'name', 'name_ar', 'wilaya_id'];
+    public function wilaya()
+    {
+        return $this->belongsTo(Wilaya::class);
+    }
 }

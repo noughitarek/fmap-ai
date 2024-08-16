@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Photo;
 use App\Models\Video;
+use App\Models\Commune;
 use App\Models\Listing;
 use App\Models\Posting;
+use App\Models\Setting;
 use App\Models\PhotosGroup;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -37,7 +39,35 @@ class ApiController extends Controller
         ])
         ->header('Content-Type', 'application/json; charset=utf-8');
     }
-
+    public function get_locations($iter = 0)
+    {
+        $setting = Setting::where('path', 'currentLocationIndex')->first();
+        
+        if (!$setting) {
+            $setting = Setting::create([
+                'path' => 'currentLocationIndex',
+                'content' => 1
+            ]);
+        }
+    
+        $location = Commune::with('wilaya')->find($setting->content);
+        
+        $setting->increment('content');
+        
+        if ($location) {
+            return response()
+                ->json($location)
+                ->header('Content-Type', 'application/json; charset=utf-8');
+        } elseif ($iter < 10) {
+            return $this->get_locations($iter + 1);
+        } else {
+            // Handle the case when no location is found after 10 iterations
+            return response()
+                ->json(['error' => 'No more locations found.'], 404)
+                ->header('Content-Type', 'application/json; charset=utf-8');
+        }
+    }
+    
     public function remove_listings()
     {
         $postings = Posting::with("accounts")
