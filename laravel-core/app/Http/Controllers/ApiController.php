@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Log;
 use App\Models\Photo;
 use App\Models\Video;
 use App\Models\Commune;
@@ -76,7 +77,10 @@ class ApiController extends Controller
         ]);
 
         return response()
-        ->json(['status'=>'success', 'message'=>'Log record has been created successfully'])
+        ->json([
+            'status' => 'success',
+            'message' => 'Log record has been created successfully'
+        ], 201);
         ->header('Content-Type', 'application/json; charset=utf-8');
     }
     public function remove_listings()

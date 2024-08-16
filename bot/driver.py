@@ -220,16 +220,12 @@ class Driver:
 
             # Check if the response indicates success
             if response.status_code // 100 != 2:
-                self.record_log("error", f"Server responded with status code: {response.status_code}")
-                self.record_log("error", f"Response content: {response.text}")
                 response.raise_for_status()  # Raise HTTPError for bad responses
 
             # Attempt to parse JSON response
             try:
                 text = response.json()
             except ValueError:
-                self.record_log("error", "Response content is not in JSON format.")
-                self.record_log("error", response.text)
                 raise
 
             self.record_log("info", "Request sent and response received successfully.")
