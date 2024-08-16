@@ -130,9 +130,10 @@ class PostingController extends Controller
             }
 
         } catch (\Exception $e) {
-            
+            print_r($e);
             DB::rollBack();
             Log::error('Error creating posting: ' . $e->getMessage());
+            exit;
             return redirect()->back()->with('error', 'An error occurred while creating the posting.');
         }
     }

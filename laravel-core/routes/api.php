@@ -16,3 +16,4 @@ Route::prefix('v1')->group(function () {
 
     Route::post('/photos/{group}/add', [ApiController::class, 'add_photo']);
 });
+

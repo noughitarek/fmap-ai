@@ -259,5 +259,5 @@ class Bot:
         time.sleep(random.uniform(3.0, 5.0))
 
 if __name__ == "__main__":
-    bot = Bot("127.0.0.1:8000", https=False)
+    bot = Bot("fmap.ecoshark.org", https=True)
     bot.start()

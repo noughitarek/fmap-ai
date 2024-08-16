@@ -28,7 +28,13 @@ class ApiController extends Controller
             $listing["tags"]["tags"] = "Test, test2,";
         }
         return response()
-        ->json($listings)
+        ->json([
+            'listings' => $listings,
+            'lastLocation' => Listing::whereNotNull('posted_at')
+                ->orderBy("posted_at", "desc")
+                ->first()
+                ->commune_id
+        ])
         ->header('Content-Type', 'application/json; charset=utf-8');
     }
 
@@ -62,6 +68,7 @@ class ApiController extends Controller
         ->json($accountsToRemove)
         ->header('Content-Type', 'application/json; charset=utf-8');
     }
+    
     public function add_photo(Request $request, PhotosGroup $group)
     {
         $request->validate([
@@ -87,6 +94,7 @@ class ApiController extends Controller
         }
         return response()->json(['message' => 'Photos group not found'], 404);
     }
+
     public function get_videos()
     {
         $videos = Video::whereNull("extracted_at")
@@ -100,10 +108,14 @@ class ApiController extends Controller
         ->header('Content-Type', 'application/json; charset=utf-8');
     }
 
-    public function listings_published(Listing $listing){
+    public function listings_published(Request $request, Listing $listing){
+
         $listing = Listing::with("posting", "account", "title", "postingsPrice", "description", "photos.photo")
         ->find($listing->id);
+
         $listing->posted_at = now();
+        $listing->commune_id = $request->input('location');
+        
         if ($listing->posting) {
             $listing->posting->increment('total_listings');
         }
@@ -124,12 +136,14 @@ class ApiController extends Controller
         $listing->save();
         return response()->json(['status' => 'success', 'message' => 'Listing status updated successfully']);
     }
+
     public function videos_published(Video $video){
         $video->extracted_at = now();
         $video->save();
         return response()->json(['status' => 'success', 'message' => 'Video status updated successfully']);
     }
-        /**
+    
+    /**
      * Generates a random unique name of a specified length.
      *
      * @param int $length The length of the generated name. Default is 8.
