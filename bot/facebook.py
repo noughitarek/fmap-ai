@@ -1,17 +1,11 @@
 import os
 import time
-import json
 import uuid
 import random
-import requests
-import logging
-import sys
-import io
 from selenium.webdriver.common.by import By
-from driver import Driver 
 
 class Facebook:
-    def __init__(self, driver: Driver) -> None:
+    def __init__(self, driver) -> None:
         self.driver = driver
 
     def handle_listings_to_remove(self):
@@ -526,7 +520,7 @@ class Facebook:
             self.driver.record_log('info', "Adding location.")
             
             location = self.driver.send_http_request('locations/get')
-            location_str = f"{location['name']}, {location['wilaya_name']}, Algeria"
+            location_str = f"{location['name']}, {location['wilaya']['name']}, Algeria"
 
             xpath = "//label[contains(., 'Location')]//input"
             if not self.driver.type(xpath, location_str, deleteBefore=True):

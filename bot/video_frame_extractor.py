@@ -1,4 +1,3 @@
-from driver import Driver
 import os
 import uuid
 import requests
@@ -9,7 +8,7 @@ import shutil
 from typing import Dict, Any, List
 
 class VideoFrameExtractor:
-    def __init__(self, driver: Driver) -> None:
+    def __init__(self, driver) -> None:
         """
         Initialize the VideoFrameExtractor with a Driver instance.
 

@@ -188,7 +188,7 @@ class Driver:
         }
 
         # Example usage in a logging function
-        self.send_http_request('POST', 'log/add', log_entry)
+        self.send_http_request('POST', 'logs/add', log_entry)
 
     def send_http_request(self, request_type: str, path: str, data: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
         """

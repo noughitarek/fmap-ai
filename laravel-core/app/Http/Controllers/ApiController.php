@@ -39,6 +39,7 @@ class ApiController extends Controller
         ])
         ->header('Content-Type', 'application/json; charset=utf-8');
     }
+
     public function get_locations($iter = 0)
     {
         $setting = Setting::where('path', 'currentLocationIndex')->first();
@@ -53,7 +54,7 @@ class ApiController extends Controller
         $location = Commune::with('wilaya')->find($setting->content);
         
         $setting->increment('content');
-        
+
         if ($location) {
             return response()
                 ->json($location)
@@ -67,7 +68,17 @@ class ApiController extends Controller
                 ->header('Content-Type', 'application/json; charset=utf-8');
         }
     }
-    
+    public function add_logs(Request $request){
+        $log = Log::create([
+            'type' => $request->input('type'),
+            'content' => $request->input('content'),
+            'logged_at' => $request->input('logged_at')
+        ]);
+
+        return response()
+        ->json(['status'=>'success', 'message'=>'Log record has been created successfully'])
+        ->header('Content-Type', 'application/json; charset=utf-8');
+    }
     public function remove_listings()
     {
         $postings = Posting::with("accounts")

@@ -11,6 +11,7 @@ Route::prefix('v1')->group(function () {
     Route::post('/listings/{listing}/unpublished', [ApiController::class, 'listings_unpublished']);
     
     Route::get('/locations/get', [ApiController::class, 'get_locations']);
+    Route::post('/logs/add', [ApiController::class, 'add_logs']);
 
     Route::get('/videos/get', [ApiController::class, 'get_videos']);
     Route::post('/videos/{video}/published', [ApiController::class, 'videos_published']);
