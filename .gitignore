@@ -1,4 +1,21 @@
-/hot
-/storage
-/build
-/crons
+# Ignore node_modules and build artifacts
+node_modules/
+build/
+dist/
+
+# Vite and cache
+.vite/
+.vite/*
+
+# Local IDE settings
+.vscode/
+
+# Laravel specific
+/storage/
+laravel-core/bootstrap/cache/
+
+# Ignore cron jobs (if they're auto-generated or you don't want them tracked)
+crons/
+
+# Ignore hot reload files
+hot
