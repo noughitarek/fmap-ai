@@ -11,18 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('accounts', function (Blueprint $table) {
+        Schema::create('tags', function (Blueprint $table) {
             $table->id();
-
-            $table->string('name');
-            $table->longText('description')->nullable();
-            $table->foreignId('accounts_group_id')->constrained('accounts_groups')->onDelete('cascade');
-
-            $table->string('facebook_user_id')->index();
             
-            $table->string('username')->index();
-            $table->string('password');
-            
+            $table->string('tag');
+            $table->foreignId('tags_group_id')->constrained('tags_groups')->onDelete('cascade');
+
             $table->integer('total_listings')->default(0);
             $table->integer('total_messages')->default(0);
             $table->integer('total_orders')->default(0);
@@ -41,6 +35,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('accounts');
+        Schema::dropIfExists('tags');
     }
 };

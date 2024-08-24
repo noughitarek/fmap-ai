@@ -210,6 +210,10 @@ const AccountsIndex: React.FC<PageProps<{ groups: AccountsGroup[], from:number, 
                                             <Hash className="h-4 w-4 text-gray-500 mr-1" />
                                             <span className="text-sm text-gray-500">{account.id}</span>
                                         </div>
+                                        <div className="flex items-center">
+                                            <Hash className="h-4 w-4 text-gray-500 mr-1" />
+                                            <span className="text-sm text-gray-500">{account.facebook_user_id}</span>
+                                        </div>
                                         <div className="flex items-center mt-1">
                                             <Contact className="h-4 w-4 text-gray-500 mr-2" />
                                             <span className="text-sm text-gray-500">{account.accounts_group.name}</span>

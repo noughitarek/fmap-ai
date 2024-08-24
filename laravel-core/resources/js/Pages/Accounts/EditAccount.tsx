@@ -18,6 +18,7 @@ interface AccountFormData {
     name: string;
     description: string;
     accounts_group_id: number;
+    facebook_user_id: string;
     username: string;
     password: string;
 }
@@ -26,6 +27,7 @@ const EditAccount: React.FC<PageProps<{groups: AccountsGroup[], account: Account
     const accountForm = useForm<AccountFormData>({
         name: account.name,
         description: account.description || '',
+        facebook_user_id: account.facebook_user_id || '',
         accounts_group_id: account.accounts_group.id || 0,
         username: account.username || '',
         password: account.password || '',
@@ -80,6 +82,7 @@ const EditAccount: React.FC<PageProps<{groups: AccountsGroup[], account: Account
             </Grid>
 
             <Grid title="Account credentials">
+                <CustomTextInput title="ID" value={accountForm.data.facebook_user_id} name='facebook_user_id' description='Enter the id of the account' required={true} handleChange={handleChange} instructions='Minimum 5 caracters'/>
                 <CustomTextInput title="Username" value={accountForm.data.username} name='username' description='Enter the username of the account' required={true} handleChange={handleChange} instructions='Minimum 5 caracters'/>
                 <CustomTextInput title="Password" value={accountForm.data.password} name='password' description='Enter the password of the account' required={true} handleChange={handleChange} instructions='Minimum 5 caracters'/>
                 {saveButton}

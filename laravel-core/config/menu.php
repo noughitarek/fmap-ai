@@ -39,6 +39,13 @@ return array(
     ),
     array(
         "type" => "link",
+        "content" => "Tags",
+        "active_when" => ["App\Http\Controllers\TagsGroupController#"],
+        "route" => "/tags",
+        "icon" => array("type" => "lucide", "content" => "Tag"),
+    ),
+    array(
+        "type" => "link",
         "content" => "Postings",
         "active_when" => ["App\Http\Controllers\PostingController#", "App\Http\Controllers\PostingsCategoryController#"],
         "route" => "/postings",

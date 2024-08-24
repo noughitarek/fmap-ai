@@ -9,6 +9,7 @@ use App\Http\Controllers\PostingController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\TagsGroupController;
 use App\Http\Controllers\PhotosGroupController;
 use App\Http\Controllers\TitlesGroupController;
 use App\Http\Controllers\AccountsGroupController;
@@ -60,6 +61,14 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/{group}/edit', [DescriptionsGroupController::class, 'edit'])->name('edit');
         Route::post('/{group}/update', [DescriptionsGroupController::class, 'update'])->name('update');
         Route::delete('/{group}/delete', [DescriptionsGroupController::class, 'destroy'])->name('destroy');
+    });
+    Route::prefix('tags')->name('tags.')->group(function() {
+        Route::get('/', [TagsGroupController::class, 'index'])->name('index');
+        Route::get('/create', [TagsGroupController::class, 'create'])->name('create');
+        Route::post('/create', [TagsGroupController::class, 'store'])->name('store');
+        Route::get('/{group}/edit', [TagsGroupController::class, 'edit'])->name('edit');
+        Route::post('/{group}/update', [TagsGroupController::class, 'update'])->name('update');
+        Route::delete('/{group}/delete', [TagsGroupController::class, 'destroy'])->name('destroy');
     });
 
     Route::prefix('postings')->name('postings.')->group(function() {

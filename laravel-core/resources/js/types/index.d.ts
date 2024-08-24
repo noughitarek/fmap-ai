@@ -48,6 +48,7 @@ export interface Account{
     description: string;
     accounts_group_id: number;
     accounts_group: AccountsGroup;
+    facebook_user_id: string;
     username: string;
     password: string;
     total_listings: number;
@@ -201,4 +202,30 @@ export interface Posting{
 export interface PostingsPrices{
     id: number;
     price: number;
+}
+export interface TagsGroup{
+    id: number;
+    name: string;
+    description: string;
+    total_listings: number;
+    total_messages: number;
+    total_orders: number;
+    string_tags: string[];
+    tags: Tag[];
+    created_at: Date;
+    updated_at: Date;
+    created_by: User;
+    updated_by: User;
+}
+
+export interface Tag{
+    id: number;
+    tag: string;
+    tags_group_id: number;
+    tags_group: TagsGroup;
+    total_listings: number;
+    total_messages: number;
+    total_orders: number;
+    created_at: Date;
+    updated_at: Date;
 }
