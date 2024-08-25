@@ -281,6 +281,9 @@ const AccountsIndex: React.FC<PageProps<{ groups: AccountsGroup[], from:number, 
                                             <Button className="flex items-center text-danger" onClick={(event) => handleDeleteAccountClick(event, account.id)}>
                                                 <Trash2 className="w-4 h-4 mr-1" /> Delete
                                             </Button>
+                                            <Button className="flex items-center text-danger" onClick={(event) => handleDeleteAccountClick(event, account.id)}>
+                                                <Trash2 className="w-4 h-4 mr-1" /> Delete All Listings
+                                            </Button>
                                         </div>
                                     </td>
                                 </tr>

@@ -229,3 +229,42 @@ export interface Tag{
     created_at: Date;
     updated_at: Date;
 }
+export interface Wilaya{
+    id: number;
+    name: string;
+    name_ar: string;
+    communes: Commune[];
+}
+export interface Commune{
+    id: number;
+    name: string;
+    name_ar: string;
+    wilaya_id: number;
+    wilaya: Wilaya;
+}
+export interface LocationsGroup{
+    id: number;
+    name: string;
+    description: string;
+    total_listings: number;
+    total_messages: number;
+    total_orders: number;
+    communes: number[];
+    locations: Location[];
+    created_at: Date;
+    updated_at: Date;
+    created_by: User;
+    updated_by: User;
+}
+export interface Location{
+    id: number;
+    commune_id: number;
+    commune: Commune;
+    locations_group_id: number;
+    locations_group: LocationsGroup;
+    total_listings: number;
+    total_messages: number;
+    total_orders: number;
+    created_at: Date;
+    updated_at: Date;
+}

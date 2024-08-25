@@ -2,16 +2,17 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreListingRequest extends FormRequest
+class StoreLocationsGroupRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        return false;
+        return Auth::user()->Has_Permissions('create_locations');
     }
 
     /**
@@ -22,7 +23,10 @@ class StoreListingRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'communes' => 'required|array|min:1',
+            'communes.*' => 'integer|exists:communes,id'
         ];
     }
 }

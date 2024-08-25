@@ -9,4 +9,8 @@ class Wilaya extends Model
 {
     use HasFactory;
     protected $fillable = ['id', 'name', 'name_ar'];
+    public function communes()
+    {
+        return $this->hasMany(Commune::class);
+    }
 }
