@@ -14,6 +14,7 @@ use App\Http\Controllers\PhotosGroupController;
 use App\Http\Controllers\TitlesGroupController;
 use App\Http\Controllers\AccountsGroupController;
 use App\Http\Controllers\LocationsGroupController;
+use App\Http\Controllers\CategoriesGroupController;
 use App\Http\Controllers\PostingsCategoryController;
 use App\Http\Controllers\DescriptionsGroupController;
 
@@ -78,6 +79,14 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/{group}/edit', [LocationsGroupController::class, 'edit'])->name('edit');
         Route::post('/{group}/update', [LocationsGroupController::class, 'update'])->name('update');
         Route::delete('/{group}/delete', [LocationsGroupController::class, 'destroy'])->name('destroy');
+    });
+    Route::prefix('categories')->name('categories.')->group(function() {
+        Route::get('/', [CategoriesGroupController::class, 'index'])->name('index');
+        Route::get('/create', [CategoriesGroupController::class, 'create'])->name('create');
+        Route::post('/create', [CategoriesGroupController::class, 'store'])->name('store');
+        Route::get('/{group}/edit', [CategoriesGroupController::class, 'edit'])->name('edit');
+        Route::post('/{group}/update', [CategoriesGroupController::class, 'update'])->name('update');
+        Route::delete('/{group}/delete', [CategoriesGroupController::class, 'destroy'])->name('destroy');
     });
 
     Route::prefix('postings')->name('postings.')->group(function() {

@@ -269,3 +269,32 @@ export interface Location{
     created_at: Date;
     updated_at: Date;
 }
+export interface CategoriesGroup{
+    id: number;
+    name: string;
+    description: string;
+    total_listings: number;
+    total_messages: number;
+    total_orders: number;
+    categories: Category[];
+    string_categories: string[];
+    created_at: Date;
+    updated_at: Date;
+    created_by: User;
+    updated_by: User;
+}
+export interface Category{
+    id: number;
+    category: string;
+    categories_group_id: number;
+    categories_group: CategoriesGroup;
+    total_listings: number;
+    total_messages: number;
+    total_orders: number;
+    created_at: Date;
+    updated_at: Date;
+}
+export interface FacebookCategory{
+    name: string;
+    sub_categories: string[];
+}

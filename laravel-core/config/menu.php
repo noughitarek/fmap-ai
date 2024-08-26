@@ -46,6 +46,13 @@ return array(
     ),
     array(
         "type" => "link",
+        "content" => "Categories",
+        "active_when" => ["App\Http\Controllers\CategoriesGroupController#"],
+        "route" => "/categories",
+        "icon" => array("type" => "lucide", "content" => "Layers2"),
+    ),
+    array(
+        "type" => "link",
         "content" => "Locations",
         "active_when" => ["App\Http\Controllers\LocationsGroupController#"],
         "route" => "/locations",
