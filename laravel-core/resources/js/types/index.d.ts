@@ -95,6 +95,7 @@ export interface PhotosGroup{
     total_orders: number;
     old_photos: string[];
     photos: Photo[];
+    old_videos: string[];
     videos: Video[];
     created_at: Date;
     updated_at: Date;

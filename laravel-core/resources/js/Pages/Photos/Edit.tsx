@@ -14,6 +14,8 @@ interface PhotosGroupForm{
     description: string;
     old_photos: string[];
     photos: File[][];
+    old_videos: string[];
+    videos: File[][];
 }
 
 const EditPhoto: React.FC<PageProps<{group: PhotosGroup}>> = ({auth, menu, group}) => {
@@ -23,6 +25,8 @@ const EditPhoto: React.FC<PageProps<{group: PhotosGroup}>> = ({auth, menu, group
         description: group.description || '',
         old_photos: group.old_photos || [],
         photos: [],
+        old_videos: group.old_videos || [],
+        videos: [],
     });
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -38,7 +42,6 @@ const EditPhoto: React.FC<PageProps<{group: PhotosGroup}>> = ({auth, menu, group
             photosGroupForm.setData(name as keyof PhotosGroupForm, value);
         }
     };
-
     const handleSubmit = async (e: React.FormEvent) => {
         console.log(photosGroupForm.data)
         e.preventDefault();
@@ -69,7 +72,6 @@ const EditPhoto: React.FC<PageProps<{group: PhotosGroup}>> = ({auth, menu, group
             photos: [...prevData.photos, []]
         }));
     };
-
     const removePhotos = (index: number) => {
         photosGroupForm.setData(prevData => ({
             ...prevData,
@@ -87,7 +89,33 @@ const EditPhoto: React.FC<PageProps<{group: PhotosGroup}>> = ({auth, menu, group
         updatedPhotos[index] = Array.from(files);
         photosGroupForm.setData('photos', updatedPhotos);
     };
+
+    const moreVideos: React.MouseEventHandler<HTMLButtonElement> = (e) => {
+        e.preventDefault();
+        photosGroupForm.setData(prevData => ({
+            ...prevData,
+            videos: [...prevData.videos, []]
+        }));
+    };
+    const removeVideos = (index: number) => {
+        photosGroupForm.setData(prevData => ({
+            ...prevData,
+            videos: prevData.videos.filter((_, i) => i !== index),
+        }));
+    };
+    const removeOldVideos = (index: number) => {
+        photosGroupForm.setData(prevData => ({
+            ...prevData,
+            old_videos: prevData.old_videos.filter((_, i) => i !== index),
+        }));
+    };
+    const handleVideoChange = (index: number, files: FileList) => {
+        const updatedVideos = [...photosGroupForm.data.videos];
+        updatedVideos[index] = Array.from(files);
+        photosGroupForm.setData('videos', updatedVideos);
+    };
     const moreButton = (<Button className="btn btn-primary" onClick={morePhotos}>More</Button>)
+    const moreVideosButton = (<Button className="btn btn-primary" onClick={moreVideos}>More</Button>)
     const saveButton = <Button className="btn btn-primary" disabled={editing} onClick={handleSubmit}>{editing?"Editing":"Edit"}</Button>
     return (<>
         <Head title="Edit a group of photos" />
@@ -169,6 +197,72 @@ const EditPhoto: React.FC<PageProps<{group: PhotosGroup}>> = ({auth, menu, group
                 </div>
                 ))}
                 {moreButton}
+            </Grid>
+            <Grid title="Groups videos" header={moreVideosButton}>
+                {photosGroupForm.data.old_videos.map((video, index)=>(
+                <div key={index} className="form-inline items-start flex-col xl:flex-row mt-5 pt-5 first:mt-0 first:pt-0 pb-4">
+                    <div className="form-label xl:w-64 xl:!mr-10">
+                        <div className="text-left">
+                            <div className="flex items-center">
+                                <div className="font-medium">Old video {index + 1}</div>
+                            </div>
+                            <div className="leading-relaxed text-slate-500 text-xs mt-3">
+                                description
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div className="w-10 h-10 flex-none image-fit rounded-full overflow-hidden">
+                        <video width="40" height="40">
+                            <source src={video} type="video/mp4" />
+                            Your browser does not support the video tag.
+                        </video>
+                    </div>
+                    <div className="w-full mt-3 xl:mt-0 flex-1">
+                        {video || ''}
+                    </div>
+                    <div className="mt-3 xl:mt-0 ms-2">
+                        <Button className='btn btn-primary' onClick={() => removeOldVideos(index)}>-</Button>
+                    </div>
+                </div>
+                ))}
+                {photosGroupForm.data.videos.map((video, index)=>(
+                <div key={index} className="form-inline items-start flex-col xl:flex-row mt-5 pt-5 first:mt-0 first:pt-0 pb-4">
+                    <div className="form-label xl:w-64 xl:!mr-10">
+                        <div className="text-left">
+                            <div className="flex items-center">
+                                <div className="font-medium">Video {index + 1}</div>
+                                <div className="ml-2 px-2 py-0.5 bg-slate-200 text-slate-600 dark:bg-darkmode-300 dark:text-slate-400 text-xs rounded-md">
+                                    Required
+                                </div>
+                            </div>
+                            <div className="leading-relaxed text-slate-500 text-xs mt-3">
+                                description
+                            </div>
+                        </div>
+                    </div>
+                    <div className="w-full mt-3 xl:mt-0 flex-1">
+                        <div className="w-full mt-3 xl:mt-2 flex-1">
+                            <input
+                                type="file"
+                                accept="video/*"
+                                required
+                                className="form-control"
+                                onChange={(e) => {
+                                    if (e.target.files) {
+                                        handleVideoChange(index, e.target.files);
+                                    }
+                                }}
+                                multiple={true}
+                            />
+                        </div>
+                    </div>
+                    <div className="mt-3 xl:mt-0 ms-2">
+                        <Button className='btn btn-primary' onClick={() => removeVideos(index)}>-</Button>
+                    </div>
+                </div>
+                ))}
+                {moreVideosButton}
             </Grid>
             <br/>
             {saveButton}

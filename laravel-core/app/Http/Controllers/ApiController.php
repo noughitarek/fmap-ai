@@ -30,13 +30,15 @@ class ApiController extends Controller
             $listing["availability"]["availability"] = "List as Single Item";
             $listing["tags"]["tags"] = "Test, test2,";
         }
+        
+        $lastListings = Listing::whereNotNull('posted_at')
+        ->orderBy("posted_at", "desc")
+        ->first();
+
         return response()
         ->json([
             'listings' => $listings,
-            'lastLocation' => Listing::whereNotNull('posted_at')
-                ->orderBy("posted_at", "desc")
-                ->first()
-                ->commune_id
+            'lastLocation' => $lastListings->commune_id ?? 1 
         ])
         ->header('Content-Type', 'application/json; charset=utf-8');
     }
@@ -80,7 +82,7 @@ class ApiController extends Controller
         ->json([
             'status' => 'success',
             'message' => 'Log record has been created successfully'
-        ], 201);
+        ], 201)
         ->header('Content-Type', 'application/json; charset=utf-8');
     }
     public function remove_listings()

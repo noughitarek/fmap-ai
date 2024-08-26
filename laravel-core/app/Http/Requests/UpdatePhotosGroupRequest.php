@@ -25,11 +25,19 @@ class UpdatePhotosGroupRequest extends FormRequest
         return [
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'photos' => 'required_without:old_photos|array|min:1',
+
+            'photos' => 'required_without_all:old_photos,videos,old_videos|array|min:1',
             'photos.*' => 'required|array|min:1',
             'photos.*.*' => 'required|file|image',
-            'old_photos' => 'required_without:photos|array',
+            'old_photos' => 'required_without_all:photos,videos,old_videos|array',
             'old_photos.*' => 'nullable|string',
+
+            'videos' => 'required_without_all:photos,old_photos,old_videos|array|min:1',
+            'videos.*' => 'required|array|min:1',
+            'videos.*.*' => 'required|file|mimetypes:video/avi,video/mpeg,video/mp4,video/quicktime',
+            'old_videos' => 'required_without_all:photos,old_photos,videos|array',
+            'old_videos.*' => 'nullable|string',
+
         ];
     }
 }

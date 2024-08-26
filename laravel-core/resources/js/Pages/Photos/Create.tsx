@@ -13,6 +13,7 @@ interface PhotosGroupForm{
     name: string;
     description: string;
     photos: File[][];
+    videos: File[][];
 }
 
 const CreatePhoto: React.FC<PageProps> = ({auth, menu}) => {
@@ -21,6 +22,7 @@ const CreatePhoto: React.FC<PageProps> = ({auth, menu}) => {
         name: '',
         description: '',
         photos: [],
+        videos: [],
     });
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
@@ -36,7 +38,6 @@ const CreatePhoto: React.FC<PageProps> = ({auth, menu}) => {
             photosGroupForm.setData(name as keyof PhotosGroupForm, value);
         }
     };
-
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setCreating(true);
@@ -57,7 +58,8 @@ const CreatePhoto: React.FC<PageProps> = ({auth, menu}) => {
                 setCreating(false);
             }
         });
-    }
+    };
+
     const morePhotos: React.MouseEventHandler<HTMLButtonElement> = (e) => {
         e.preventDefault();
         photosGroupForm.setData(prevData => ({
@@ -65,7 +67,6 @@ const CreatePhoto: React.FC<PageProps> = ({auth, menu}) => {
             photos: [...prevData.photos, []]
         }));
     };
-
     const removePhotos = (index: number) => {
         photosGroupForm.setData(prevData => ({
             ...prevData,
@@ -77,7 +78,28 @@ const CreatePhoto: React.FC<PageProps> = ({auth, menu}) => {
         updatedPhotos[index] = Array.from(files);
         photosGroupForm.setData('photos', updatedPhotos);
     };
+
+    const moreVideos: React.MouseEventHandler<HTMLButtonElement> = (e) => {
+        e.preventDefault();
+        photosGroupForm.setData(prevData => ({
+            ...prevData,
+            videos: [...prevData.videos, []]
+        }));
+    };
+    const removeVideos = (index: number) => {
+        photosGroupForm.setData(prevData => ({
+            ...prevData,
+            videos: prevData.videos.filter((_, i) => i !== index),
+        }));
+    };
+    const handleVideoChange = (index: number, files: FileList) => {
+        const updatedVideos = [...photosGroupForm.data.videos];
+        updatedVideos[index] = Array.from(files);
+        photosGroupForm.setData('videos', updatedVideos);
+    };
+
     const moreButton = (<Button className="btn btn-primary" onClick={morePhotos}>More</Button>)
+    const moreVideosButton = (<Button className="btn btn-primary" onClick={moreVideos}>More</Button>)
     const saveButton = <Button className="btn btn-primary" disabled={creating} onClick={handleSubmit}>{creating?"Creating":"Create"}</Button>
     return (<>
         <Head title="Create a group of photos" />
@@ -135,6 +157,47 @@ const CreatePhoto: React.FC<PageProps> = ({auth, menu}) => {
                 </div>
                 ))}
                 {moreButton}
+            </Grid>
+            
+            <Grid title="Groups videos" header={moreVideosButton}>
+                {photosGroupForm.data.videos.map((video, index)=>(
+                <div key={index} className="form-inline items-start flex-col xl:flex-row mt-5 pt-5 first:mt-0 first:pt-0 pb-4">
+                    <div className="form-label xl:w-64 xl:!mr-10">
+                        <div className="text-left">
+                            <div className="flex items-center">
+                                <div className="font-medium">Video {index + 1}</div>
+                                <div className="ml-2 px-2 py-0.5 bg-slate-200 text-slate-600 dark:bg-darkmode-300 dark:text-slate-400 text-xs rounded-md">
+                                    Required
+                                </div>
+                            </div>
+                            <div className="leading-relaxed text-slate-500 text-xs mt-3">
+                                description
+                            </div>
+                        </div>
+                    </div>
+                    <div className="w-full mt-3 xl:mt-0 flex-1">
+                        <div className="w-full mt-3 xl:mt-2 flex-1">
+                            <input
+                                type="file"
+                                accept="video/*"
+                                required
+                                className="form-control"
+                                onChange={(e) => {
+                                    if (e.target.files) {
+                                        handleVideoChange(index, e.target.files);
+                                    }
+                                }}
+                                multiple={true}
+                            />
+                            <div className="form-help text-right mt-2">Video</div>
+                        </div>
+                    </div>
+                    <div className="mt-3 xl:mt-0 ms-2">
+                        <Button className='btn btn-primary' onClick={() => removeVideos(index)}>-</Button>
+                    </div>
+                </div>
+                ))}
+                {moreVideosButton}
             </Grid>
             <br/>
             {saveButton}

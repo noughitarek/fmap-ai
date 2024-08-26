@@ -107,7 +107,7 @@ const PhotosIndex: React.FC<PageProps<{ groups: PhotosGroup[], from:number, to:n
                             </div>
                         </div>
                         <div className="w-full sm:w-auto flex">
-                        <Link href={route('photos.import')} className="btn btn-primary shadow-md mr-2">Import video</Link>
+                        {/* <Link href={route('photos.import')} className="btn btn-primary shadow-md mr-2">Import video</Link> */}
                         <Link href={route('photos.create')} className="btn btn-primary shadow-md mr-2">Create Group of Photos</Link>
                         </div>
                     </div>
