@@ -1,6 +1,6 @@
 
 import React, {useEffect, useState, ChangeEvent} from 'react';
-import { AccountsGroup, DescriptionsGroup, PageProps, PhotosGroup, Posting, PostingsCategory, PostingsPrices, TitlesGroup } from '@/types';
+import { AccountsGroup, DescriptionsGroup, LocationsGroup, PageProps, PhotosGroup, Posting, PostingsCategory, PostingsPrices, TitlesGroup } from '@/types';
 import { Head, Link } from '@inertiajs/react';
 import Page from '@/Base-components/Page';
 import Webmaster from '@/Layouts/Webmaster';
@@ -24,18 +24,24 @@ interface PostingFormData {
     accounts_group_id: number;
     titles_group_id: number;
     photos_group_id: number;
+    tags_group_id: number;
+    categories_group_id: number;
+    locations_to_include_id: number;
+    locations_to_exclude_id: number;
     descriptions_group_id?: number;
     posting_prices: number[];
 }
 
 const CreatePosting: React.FC<PageProps<{
-    categories: PostingsCategory[],
+    postingCategories: PostingsCategory[],
     accounts: AccountsGroup[],
     titles: TitlesGroup[],
     photos: PhotosGroup[],
     descriptions: DescriptionsGroup[],
-
-}>> = ({ auth, accounts, categories, titles, photos, descriptions, menu }) => {
+    locations: LocationsGroup[];
+    tags: LocationsGroup[];
+    categories: LocationsGroup[];
+}>> = ({ auth, accounts, postingCategories, titles, photos, descriptions, locations, tags, categories, menu }) => {
     const postingForm = useForm<PostingFormData>({
         name: '',
         description: '',
@@ -46,6 +52,12 @@ const CreatePosting: React.FC<PageProps<{
         accounts_group_id: 0,
         titles_group_id: 0,
         photos_group_id: 0,
+
+        tags_group_id: 0,
+        categories_group_id: 0,
+        locations_to_include_id: 0,
+        locations_to_exclude_id: 0,
+
         posting_prices: [],
     });
     const [creating, setCreating] = useState(false)
@@ -69,7 +81,7 @@ const CreatePosting: React.FC<PageProps<{
                 router.get(route('postings.index'));
             },
             onError: (error) => {
-                toast.error('Error creating the account');
+                toast.error('Error creating the posting');
                 console.error('Error:', error);
             },
             onFinish: () => {
@@ -98,7 +110,7 @@ const CreatePosting: React.FC<PageProps<{
     const moreButton = (<Button className="btn btn-primary" onClick={morePrices}>More</Button>)
     const saveButton = (<Button className="btn btn-primary mt-4" disabled={creating} onClick={handleSubmit}>{creating?"Creating":"Create"}</Button>)
     return (<>
-        <Head title="Create a account" />
+        <Head title="Create a posting" />
         <Webmaster
             user={auth.user}
             menu={menu}
@@ -107,13 +119,13 @@ const CreatePosting: React.FC<PageProps<{
                 <li className="breadcrumb-item active" aria-current="page">Create</li>
             </>}
         >
-        <Page title="Create a account" header={<></>}>
+        <Page title="Create a posting" header={<></>}>
             <Grid title="Posting's information" header={saveButton}>
-                <CustomTextInput title="Name" value={postingForm.data.name} name='name' description='Enter the name of the account' required={true} handleChange={handleChange} instructions='Minimum 5 caracters'/>
-                <CustomTextarea title="Description" value={postingForm.data.description} name='description' description='Enter the description of the account' required={false} handleChange={handleChange} instructions='Not required'/>
-                <CustomSelect title="Postings category" elements={categories} value={postingForm.data.postings_category_id} name='postings_category_id' description='Enter the category you want to assing the account to' required={true} handleChange={handleChange} instructions='Required'/>
-                <CustomNumber title="Max per day" value={postingForm.data.max_per_day} name='max_per_day' description='Enter the name of the account' required={true} handleChange={handleChange} instructions='Minimum 5 caracters'/>
-                <CustomNumber title="Photo per listing" value={postingForm.data.photo_per_listing} name='photo_per_listing' description='Enter the name of the account' required={true} handleChange={handleChange} instructions='Minimum 5 caracters'/>
+                <CustomTextInput title="Name" value={postingForm.data.name} name='name' description='Enter the name of the posting' required={true} handleChange={handleChange} instructions='Minimum 5 caracters'/>
+                <CustomTextarea title="Description" value={postingForm.data.description} name='description' description='Enter the description of the posting' required={false} handleChange={handleChange} instructions='Not required'/>
+                <CustomSelect title="Postings category" elements={postingCategories} value={postingForm.data.postings_category_id} name='postings_category_id' description='Enter the category you want to assing the posting to' required={true} handleChange={handleChange} instructions='Required'/>
+                <CustomNumber title="Max per day" value={postingForm.data.max_per_day} name='max_per_day' description='Enter the name of the posting' required={true} handleChange={handleChange} instructions='Minimum 5 caracters'/>
+                <CustomNumber title="Photo per listing" value={postingForm.data.photo_per_listing} name='photo_per_listing' description='Enter the name of the posting' required={true} handleChange={handleChange} instructions='Minimum 5 caracters'/>
                 <CustomNumber title="Expire after" value={postingForm.data.expire_after} name='expire_after' description='Enter the expiration delay' required={true} handleChange={handleChange} instructions='In seconds'/>
             </Grid>
 
@@ -122,6 +134,12 @@ const CreatePosting: React.FC<PageProps<{
                 <CustomSelect title="Titles group" elements={titles} value={postingForm.data.titles_group_id} name='titles_group_id' description='Enter the group of titles you want to use' required={true} handleChange={handleChange} instructions='Required'/>
                 <CustomSelect title="Photos group" elements={photos} value={postingForm.data.photos_group_id} name='photos_group_id' description='Enter the group of photos you want to use' required={true} handleChange={handleChange} instructions='Required'/>
                 <CustomSelect title="Descriptions group" elements={descriptions} value={postingForm.data.descriptions_group_id} name='descriptions_group_id' description='Enter the group of descriptions you want to use' required={false} handleChange={handleChange} instructions='Not required'/>
+                
+                <CustomSelect title="Locations to include" elements={locations} value={postingForm.data.locations_to_include_id} name='descriptions_group_id' description='Enter the group of descriptions you want to use' required={false} handleChange={handleChange} instructions='Not required'/>
+                <CustomSelect title="Locations to exclude" elements={locations} value={postingForm.data.locations_to_exclude_id} name='descriptions_group_id' description='Enter the group of descriptions you want to use' required={false} handleChange={handleChange} instructions='Not required'/>
+                <CustomSelect title="Tags group" elements={tags} value={postingForm.data.tags_group_id} name='descriptions_group_id' description='Enter the group of descriptions you want to use' required={false} handleChange={handleChange} instructions='Not required'/>
+                <CustomSelect title="Categories group" elements={categories} value={postingForm.data.categories_group_id} name='descriptions_group_id' description='Enter the group of descriptions you want to use' required={false} handleChange={handleChange} instructions='Not required'/>
+                
             </Grid>
             <Grid title="Posting prices" header={moreButton}>
                 {postingForm.data.posting_prices.map((price, index)=>(

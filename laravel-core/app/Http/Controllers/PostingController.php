@@ -4,10 +4,13 @@ namespace App\Http\Controllers;
 
 use Inertia\Inertia;
 use App\Models\Posting;
+use App\Models\TagsGroup;
 use App\Models\PhotosGroup;
 use App\Models\TitlesGroup;
 use App\Models\AccountsGroup;
+use App\Models\LocationsGroup;
 use App\Models\PostingsPrices;
+use App\Models\CategoriesGroup;
 use App\Models\PostingsCategory;
 use App\Models\DescriptionsGroup;
 use Illuminate\Support\Facades\DB;
@@ -43,7 +46,7 @@ class PostingController extends Controller
      */
     public function create()
     {
-        $categories = PostingsCategory::with("createdBy", "updatedBy", "deletedBy")
+        $postingCategories = PostingsCategory::with("createdBy", "updatedBy", "deletedBy")
         ->whereNull('deleted_by')
         ->whereNull('deleted_at')
         ->orderBy('id', 'desc')
@@ -73,8 +76,29 @@ class PostingController extends Controller
         ->orderBy('id', 'desc')
         ->get()->toArray();
 
+        $locations = LocationsGroup::with("createdBy", "updatedBy", "deletedBy")
+        ->whereNull('deleted_by')
+        ->whereNull('deleted_at')
+        ->orderBy('id', 'desc')
+        ->get()->toArray();
+
+        $tags = TagsGroup::with("createdBy", "updatedBy", "deletedBy")
+        ->whereNull('deleted_by')
+        ->whereNull('deleted_at')
+        ->orderBy('id', 'desc')
+        ->get()->toArray();
+
+        $categories = CategoriesGroup::with("createdBy", "updatedBy", "deletedBy")
+        ->whereNull('deleted_by')
+        ->whereNull('deleted_at')
+        ->orderBy('id', 'desc')
+        ->get()->toArray();
+
         return Inertia::render('Postings/CreatePosting', [
+            'postingCategories' => $postingCategories,
             'categories' => $categories,
+            'tags' => $tags,
+            'locations' => $locations,
             'accounts' => $accounts,
             'titles' => $titles,
             'photos' => $photos,
@@ -105,21 +129,23 @@ class PostingController extends Controller
                 'photos_group_id' => $request->input('photos_group_id'),
                 'descriptions_group_id' => $request->input('descriptions_group_id'),
 
+                'tags_group_id' => $request->input('tags_group_id'),
+                'categories_group_id' => $request->input('categories_group_id'),
+                'locations_to_include_id' => $request->input('locations_to_include_id'),
+                'locations_to_exclude_id' => $request->input('locations_to_exclude_id'),
+
                 'created_by' => Auth::user()->id,
                 'updated_by' => Auth::user()->id,
             ]);
                 
             if ($posting) {
                 foreach($request->input('posting_prices') as $price) {
-                    if (!empty($price)) {
-                        
-                        PostingsPrices::create([
-                            'price' => $price,
-                            'posting_id' => $posting->id,
-                            'created_by' => Auth::user()->id,
-                            'updated_by' => Auth::user()->id,
-                        ]);
-                    }
+                    PostingsPrices::create([
+                        'price' => $price,
+                        'posting_id' => $posting->id,
+                        'created_by' => Auth::user()->id,
+                        'updated_by' => Auth::user()->id,
+                    ]);
                 }
 
                 DB::commit();
@@ -202,6 +228,10 @@ class PostingController extends Controller
                 'accounts_group_id' => $request->input('accounts_group_id'),
                 'titles_group_id' => $request->input('titles_group_id'),
                 'photos_group_id' => $request->input('photos_group_id'),
+                'tags_group_id' => $request->input('tags_group_id'),
+                'categories_group_id' => $request->input('categories_group_id'),
+                'locations_to_include_id' => $request->input('locations_to_include_id'),
+                'locations_to_exclude_id' => $request->input('locations_to_exclude_id'),
                 'descriptions_group_id' => $request->input('descriptions_group_id'),
                 'updated_by' => Auth::user()->id,
             ]);

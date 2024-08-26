@@ -22,6 +22,10 @@ interface PostingFormData {
     expire_after: number;
     postings_category_id: number;
     accounts_group_id: number;
+    tags_group_id: number;
+    categories_group_id: number;
+    locations_to_include_id: number;
+    locations_to_exclude_id: number;
     titles_group_id: number;
     photos_group_id: number;
     descriptions_group_id?: number;
@@ -42,6 +46,10 @@ const EditPosting: React.FC<PageProps<{
         max_per_day: posting.max_per_day,
         photo_per_listing: posting.photo_per_listing,
         expire_after: posting.expire_after,
+        tags_group_id: posting.tags_group_id,
+        categories_group_id: posting.categories_group_id,
+        locations_to_include_id: posting.locations_to_include_id,
+        locations_to_exclude_id: posting.locations_to_exclude_id,
         postings_category_id: posting.postings_category_id,
         accounts_group_id: posting.accounts_group_id,
         titles_group_id: posting.titles_group_id,

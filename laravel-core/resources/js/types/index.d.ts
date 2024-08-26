@@ -187,7 +187,14 @@ export interface Posting{
     photos_group_id: number;
     descriptions_group: DescriptionsGroup;
     descriptions_group_id : number;
-
+    tags_group: TagsGroup;
+    tags_group_id: number;
+    categories_group: CategoriesGroup;
+    categories_group_id: number;
+    locations_to_include: LocationsGroup;
+    locations_to_include_id: number;
+    locations_to_exclude: LocationsGroup;
+    locations_to_exclude_id: number;
     total_listings: number;
     total_messages: number;
     total_orders: number;
