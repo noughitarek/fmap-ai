@@ -84,4 +84,20 @@ class Posting extends Model
     {
         return $this->belongsTo(DescriptionsGroup::class);
     }
+    public function tagsGroup()
+    {
+        return $this->belongsTo(TagsGroup::class);
+    }
+    public function categoriesGroup()
+    {
+        return $this->belongsTo(CategoriesGroup::class);
+    }
+    public function locationsToInclude()
+    {
+        return $this->belongsTo(LocationsGroup::class, 'locations_to_include_id');
+    }
+    public function locationsToExclude()
+    {
+        return $this->belongsTo(LocationsGroup::class, 'locations_to_exclude_id');
+    }
 }

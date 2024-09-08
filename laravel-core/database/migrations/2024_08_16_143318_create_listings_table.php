@@ -16,12 +16,15 @@ return new class extends Migration
                 $table->id();
 
                 $table->foreignId('posting_id')->constrained('postings');
-                $table->foreignId('commune_id')->constrained('communes')->nullable();
+                $table->foreignId('commune_id')->nullable()->constrained('communes');
                 
                 $table->foreignId('account_id')->constrained('accounts');
                 $table->foreignId('title_id')->constrained('titles');
                 $table->foreignId('postings_price_id')->constrained('postings_prices');
                 $table->foreignId('description_id')->nullable()->constrained('descriptions');
+
+                $table->foreignId('category_id')->nullable()->constrained('categories');
+                $table->foreignId('tags_group_id')->nullable()->constrained('tags_groups');
                 
                 $table->timestamp('post_at');
                 $table->timestamp('posted_at')->nullable();

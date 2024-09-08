@@ -14,6 +14,8 @@ class Listing extends Model
         "title_id",
         "postings_price_id",
         "description_id",
+        "category_id",
+        "tags_group_id",
         "post_at",
         "posted_at",
     ];
@@ -49,5 +51,17 @@ class Listing extends Model
     public function photos()
     {
         return $this->hasMany(ListingsPhoto::class);
+    }
+    public function category()
+    {
+        return $this->belongsTo(Category::class)
+        ->whereNull("deleted_at")
+        ->whereNull("deleted_by");;
+    }
+    public function tagsGroup()
+    {
+        return $this->belongsTo(TagsGroup::class)
+        ->whereNull("deleted_at")
+        ->whereNull("deleted_by");;
     }
 }

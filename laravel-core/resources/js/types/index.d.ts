@@ -305,3 +305,12 @@ export interface FacebookCategory{
     name: string;
     sub_categories: string[];
 }
+
+export interface Data{
+    id: number;
+    title: string;
+    price: number;
+    clicks: number;
+    location: string;
+    updated_at: Date;
+}

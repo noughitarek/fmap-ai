@@ -1,6 +1,6 @@
 
 import React, {useEffect, useState, ChangeEvent} from 'react';
-import { AccountsGroup, DescriptionsGroup, PageProps, PhotosGroup, Posting, PostingsCategory, PostingsPrices, TitlesGroup } from '@/types';
+import { AccountsGroup, DescriptionsGroup, LocationsGroup, PageProps, PhotosGroup, Posting, PostingsCategory, PostingsPrices, TitlesGroup } from '@/types';
 import { Head, Link } from '@inertiajs/react';
 import Page from '@/Base-components/Page';
 import Webmaster from '@/Layouts/Webmaster';
@@ -34,12 +34,15 @@ interface PostingFormData {
 
 const EditPosting: React.FC<PageProps<{
     posting: Posting;
-    categories: PostingsCategory[],
+    postingCategories: PostingsCategory[],
     accounts: AccountsGroup[],
     titles: TitlesGroup[],
     photos: PhotosGroup[],
+    locations: LocationsGroup[];
+    tags: LocationsGroup[];
+    categories: LocationsGroup[];
     descriptions: DescriptionsGroup[],
-}>> = ({ auth, posting, accounts, categories, titles, photos, descriptions, menu }) => {
+}>> = ({ auth, posting, accounts, postingCategories, titles, photos, descriptions, menu, locations, tags, categories }) => {
     const postingForm = useForm<PostingFormData>({
         name: posting.name,
         description: posting.description,
@@ -120,7 +123,7 @@ const EditPosting: React.FC<PageProps<{
             <Grid title="Posting's information" header={saveButton}>
                 <CustomTextInput title="Name" value={postingForm.data.name} name='name' description='Enter the name of the account' required={true} handleChange={handleChange} instructions='Minimum 5 caracters'/>
                 <CustomTextarea title="Description" value={postingForm.data.description} name='description' description='Enter the description of the account' required={false} handleChange={handleChange} instructions='Not required'/>
-                <CustomSelect title="Postings category" elements={categories} value={postingForm.data.postings_category_id} name='postings_category_id' description='Enter the category you want to assing the account to' required={true} handleChange={handleChange} instructions='Required'/>
+                <CustomSelect title="Postings category" elements={postingCategories} value={postingForm.data.postings_category_id} name='postings_category_id' description='Enter the category you want to assing the account to' required={true} handleChange={handleChange} instructions='Required'/>
                 <CustomNumber title="Max per day" value={postingForm.data.max_per_day} name='max_per_day' description='Enter the name of the account' required={true} handleChange={handleChange} instructions='Minimum 5 caracters'/>
                 <CustomNumber title="Photo per listing" value={postingForm.data.photo_per_listing} name='photo_per_listing' description='Enter the name of the account' required={true} handleChange={handleChange} instructions='Minimum 5 caracters'/>
                 <CustomNumber title="Expire after" value={postingForm.data.expire_after} name='expire_after' description='Enter the expiration delay' required={true} handleChange={handleChange} instructions='In seconds'/>
@@ -131,6 +134,10 @@ const EditPosting: React.FC<PageProps<{
                 <CustomSelect title="Titles group" elements={titles} value={postingForm.data.titles_group_id} name='titles_group_id' description='Enter the group of titles you want to use' required={true} handleChange={handleChange} instructions='Required'/>
                 <CustomSelect title="Photos group" elements={photos} value={postingForm.data.photos_group_id} name='photos_group_id' description='Enter the group of photos you want to use' required={true} handleChange={handleChange} instructions='Required'/>
                 <CustomSelect title="Descriptions group" elements={descriptions} value={postingForm.data.descriptions_group_id} name='descriptions_group_id' description='Enter the group of descriptions you want to use' required={false} handleChange={handleChange} instructions='Not required'/>
+                <CustomSelect title="Locations to include" elements={locations} value={postingForm.data.locations_to_include_id} name='locations_to_include_id' description='Enter the group of descriptions you want to use' required={false} handleChange={handleChange} instructions='Not required'/>
+                <CustomSelect title="Locations to exclude" elements={locations} value={postingForm.data.locations_to_exclude_id} name='locations_to_exclude_id' description='Enter the group of descriptions you want to use' required={false} handleChange={handleChange} instructions='Not required'/>
+                <CustomSelect title="Tags group" elements={tags} value={postingForm.data.tags_group_id} name='tags_group_id' description='Enter the group of descriptions you want to use' required={false} handleChange={handleChange} instructions='Not required'/>
+                <CustomSelect title="Categories group" elements={categories} value={postingForm.data.categories_group_id} name='categories_group_id' description='Enter the group of descriptions you want to use' required={false} handleChange={handleChange} instructions='Not required'/>
             </Grid>
             <Grid title="Posting prices" header={moreButton}>
                 {postingForm.data.posting_prices.map((price, index)=>(

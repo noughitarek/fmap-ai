@@ -16,6 +16,7 @@ class Account extends Model
         'facebook_user_id',
         'username',
         'password',
+        'drop_listings_at',
         'total_listings',
         'total_messages',
         'total_orders',

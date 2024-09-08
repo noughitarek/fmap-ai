@@ -3,6 +3,7 @@
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Application;
+use App\Http\Controllers\DataController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\PostingController;
@@ -37,7 +38,14 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/{account}/edit', [AccountController::class, 'edit'])->name('edit');
         Route::post('/{account}/update', [AccountController::class, 'update'])->name('update');
         Route::delete('/{account}/delete', [AccountController::class, 'destroy'])->name('destroy');
+        Route::post('/{account}/listings/drop', [AccountController::class, 'drop_listings'])->name('drop_listings');
     });
+
+    Route::prefix('data')->name('data.')->group(function() {
+        Route::get('/', [DataController::class, 'index'])->name('index');
+        Route::get('/accounts/{account}', [DataController::class, 'account'])->name('account');
+    });
+
     Route::prefix('titles')->name('titles.')->group(function() {
         Route::get('/', [TitlesGroupController::class, 'index'])->name('index');
         Route::get('/create', [TitlesGroupController::class, 'create'])->name('create');

@@ -3,12 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Models\Log;
+use App\Models\Data;
 use App\Models\Photo;
 use App\Models\Video;
+use App\Models\Account;
 use App\Models\Commune;
 use App\Models\Listing;
 use App\Models\Posting;
 use App\Models\Setting;
+use App\Models\Location;
 use App\Models\PhotosGroup;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -16,16 +19,86 @@ use Illuminate\Support\Facades\Auth;
 
 class ApiController extends Controller
 {
+    public function update_results(){
+        
+        $accounts = Account::whereNull('deleted_at')
+        ->whereNull('deleted_by')
+        ->orderBy('id', 'desc')
+        ->get();
+
+        $accountsToUpdate = [];
+        foreach($accounts as $account){
+            $settingPath = 'updateResultsAccount' . $account->id;
+
+            $setting = Setting::where('path', $settingPath)
+            ->first();
+
+            if((!$setting) || ($setting && $setting->updated_at >= now()->addDay())){
+                Data::where('account_id', $account->id)->delete();
+                $accountsToUpdate[] = $account->toArray();
+            }
+        }
+        
+        return response()
+        ->json($accountsToUpdate)
+        ->header('Content-Type', 'application/json; charset=utf-8');
+    }
+
+    public function update_accounts_results(Request $request, Account $account)
+    {
+        $title = $request->title;
+        $locationParts = explode('·', $request->location);
+        
+        if (count($locationParts) < 2) {
+            return response()
+                ->json(['status' => 'error', 'message' => 'Invalid location format'])
+                ->header('Content-Type', 'application/json; charset=utf-8');
+        }
+        
+        $price = (int)preg_replace('/\D/', '',$locationParts[0]);
+        $location = $locationParts[1];
+        $clicks = (int)preg_replace('/\D/', '', $request->clicks);
+        
+        $data = Data::where('account_id', $account->id)
+            ->where('location', $location)
+            ->where('title', $title)
+            ->where('price', $price)
+            ->first();
+        
+        if ($data) {
+            $data->clicks += $clicks;
+            $data->save();
+        } else {
+            Data::create([
+                'account_id' => $account->id,
+                'location' => $location,
+                'clicks' => $clicks,
+                'title' => $title,
+                'price' => $price,
+            ]);
+        }
+        
+        $settingPath = 'updateResultsAccount' . $account->id;
+        $setting = Setting::create([
+            'path' => $settingPath,
+            'content' => 0
+        ]);
+        return response()
+            ->json(['status' => 'success'])
+            ->header('Content-Type', 'application/json; charset=utf-8');
+        
+    }
+
     public function get_listings(){
-        $listings = Listing::with("posting", "account", "title", "postingsPrice", "description", "photos.photo")
+        $listings = Listing::with("posting", "account", "title", "postingsPrice", "description", "photos.photo", "category", "tagsGroup.tags")
         ->where("post_at", "<", now())
         ->whereNull("posted_at")
         ->orderBy("account_id", "desc")
-        ->get()
-        ->toArray();
+        ->get()->toArray();
 
+        
         foreach($listings as &$listing){
-            $listing["category"]["category"] = "Tools";
+            $listing["tags"] = implode(',', $listing['tags_group']['tags']);
             $listing["condition"]["condition"] = "Like New";
             $listing["availability"]["availability"] = "List as Single Item";
             $listing["tags"]["tags"] = "Test, test2,";
@@ -42,9 +115,63 @@ class ApiController extends Controller
         ])
         ->header('Content-Type', 'application/json; charset=utf-8');
     }
+    
+    public function get_locations(Posting $posting, $iter = 0){
+        // Load the posting with related locations
+        $posting = Posting::with('locationsToInclude.locations', 'locationsToExclude.locations')->find($posting->id);
 
-    public function get_locations($iter = 0)
-    {
+        // Get included locations or default to all communes
+        $includedLocations = $posting->locations_to_include_id 
+            ? $posting->locationsToInclude->locations->pluck('commune_id')->flatten() 
+            : Commune::orderBy('id', 'asc')->pluck('id');
+
+        // Get excluded locations or default to an empty collection
+        $excludedLocations = $posting->locations_to_exclude_id 
+            ? $posting->locationsToExclude->locations->pluck('commune_id')->flatten() 
+            : collect();
+
+        // Filter and get unique locations based on commune_id
+        $posloc = Commune::whereIn('id', $includedLocations)
+            ->whereNotIn('id', $excludedLocations)
+            ->get();
+
+        // Return an empty response if no locations are found
+        if ($posloc->isEmpty()) {
+            return response()
+                ->json([])
+                ->header('Content-Type', 'application/json; charset=utf-8');
+        }
+
+        // Retrieve or create the setting for the current location index
+        $settingPath = 'currentLocationIndexPosting' . $posting->id;
+        $setting = Setting::firstOrCreate(['path' => $settingPath], ['content' => 0]);
+
+        // Reset the index if it exceeds the number of locations
+        if ($setting->content >= $posloc->count()) {
+            $setting->content = 0;
+            $setting->save();
+        }
+
+        // Retrieve the location based on the current index
+        $location = Commune::with('wilaya')->find($posloc[$setting->content]['id']);
+
+        // Increment the location index
+        $setting->increment('content');
+
+        if ($location) {
+            return response()
+                ->json($location)
+                ->header('Content-Type', 'application/json; charset=utf-8');
+        } elseif ($iter < 10) {
+            return $this->get_locations($posting, $iter + 1);
+        } else {
+            return response()
+                ->json(['error' => 'No more locations found.'], 404)
+                ->header('Content-Type', 'application/json; charset=utf-8');
+        }
+    }
+
+    public function get_locations0($iter = 0){
         $setting = Setting::where('path', 'currentLocationIndex')->first();
         
         if (!$setting) {
@@ -71,6 +198,7 @@ class ApiController extends Controller
                 ->header('Content-Type', 'application/json; charset=utf-8');
         }
     }
+
     public function add_logs(Request $request){
         $log = Log::create([
             'type' => $request->input('type'),
@@ -85,8 +213,8 @@ class ApiController extends Controller
         ], 201)
         ->header('Content-Type', 'application/json; charset=utf-8');
     }
-    public function remove_listings()
-    {
+
+    public function remove_listings(){
         $postings = Posting::with("accounts")
         ->whereNull('deleted_by')
         ->whereNull('deleted_at')
@@ -111,13 +239,31 @@ class ApiController extends Controller
                 
             }
         }
+        
+        $accounts = Account::whereNull('deleted_at')
+            ->whereNull('deleted_by')
+            ->where('drop_listings_at', '<', now())
+            ->get();
+    
+        foreach ($accounts as $account) {
+            if (!in_array($account->toArray(), $accountsToRemove)) {
+                $accountsToRemove[] = $account->toArray();
+            }
+        }
+
         return response()
         ->json($accountsToRemove)
         ->header('Content-Type', 'application/json; charset=utf-8');
     }
     
-    public function add_photo(Request $request, PhotosGroup $group)
-    {
+    public function droped_listings(Account $account){
+        $account->update([
+            'drop_listings_at' => null,
+        ]);
+        return response()->json(['status' => 'success', 'message' => 'Listing status updated successfully']);
+    }
+
+    public function add_photo(Request $request, PhotosGroup $group)    {
         $request->validate([
             'photo' => 'required|file|mimes:jpg,png,pdf|max:2048',
         ]);
@@ -142,8 +288,7 @@ class ApiController extends Controller
         return response()->json(['message' => 'Photos group not found'], 404);
     }
 
-    public function get_videos()
-    {
+    public function get_videos(){
         $videos = Video::whereNull("extracted_at")
         ->whereNull("deleted_at")
         ->whereNull("deleted_by")
@@ -190,12 +335,6 @@ class ApiController extends Controller
         return response()->json(['status' => 'success', 'message' => 'Video status updated successfully']);
     }
     
-    /**
-     * Generates a random unique name of a specified length.
-     *
-     * @param int $length The length of the generated name. Default is 8.
-     * @return string The randomly generated unique name.
-     */
     private function generateRandomUniqueName($length = 8) {
         $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
         $randomName = '';

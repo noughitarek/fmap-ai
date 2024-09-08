@@ -15,6 +15,13 @@ return array(
         "route" => "/accounts",
         "icon" => array("type" => "lucide", "content" => "Facebook"),
     ),
+    array(
+        "type" => "link",
+        "content" => "Data",
+        "active_when" => ["App\Http\Controllers\DataController#"],
+        "route" => "/data",
+        "icon" => array("type" => "lucide", "content" => "Database"),
+    ),
     array("type" => "divider"),
     array(
         "type" => "link",

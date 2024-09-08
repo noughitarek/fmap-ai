@@ -156,10 +156,8 @@ class PostingController extends Controller
             }
 
         } catch (\Exception $e) {
-            print_r($e);
             DB::rollBack();
             Log::error('Error creating posting: ' . $e->getMessage());
-            exit;
             return redirect()->back()->with('error', 'An error occurred while creating the posting.');
         }
     }
@@ -171,7 +169,7 @@ class PostingController extends Controller
     {
         $posting = Posting::with('postingsCategory', 'postingPrices')->find($posting->id);
         $posting->posting_prices_numbers = $posting->postingPrices->pluck('price')->toArray();
-        $categories = PostingsCategory::with("createdBy", "updatedBy", "deletedBy")
+        $postingCategories = PostingsCategory::with("createdBy", "updatedBy", "deletedBy")
         ->whereNull('deleted_by')
         ->whereNull('deleted_at')
         ->orderBy('id', 'desc')
@@ -201,8 +199,29 @@ class PostingController extends Controller
         ->orderBy('id', 'desc')
         ->get()->toArray();
         
+        $locations = LocationsGroup::with("createdBy", "updatedBy", "deletedBy")
+        ->whereNull('deleted_by')
+        ->whereNull('deleted_at')
+        ->orderBy('id', 'desc')
+        ->get()->toArray();
+
+        $tags = TagsGroup::with("createdBy", "updatedBy", "deletedBy")
+        ->whereNull('deleted_by')
+        ->whereNull('deleted_at')
+        ->orderBy('id', 'desc')
+        ->get()->toArray();
+
+        $categories = CategoriesGroup::with("createdBy", "updatedBy", "deletedBy")
+        ->whereNull('deleted_by')
+        ->whereNull('deleted_at')
+        ->orderBy('id', 'desc')
+        ->get()->toArray();
+        
         return Inertia::render('Postings/EditPosting', [
+            'postingCategories' => $postingCategories,
             'categories' => $categories,
+            'tags' => $tags,
+            'locations' => $locations,
             'accounts' => $accounts,
             'titles' => $titles,
             'photos' => $photos,

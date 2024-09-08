@@ -126,4 +126,18 @@ class AccountController extends Controller
             return redirect()->back()->with('error', 'Account could not be deleted.');
         }
     }
+
+    public function drop_listings(Account $account)
+    {
+        
+        $account->update([
+            'drop_listings_at' => now(),
+        ]);
+
+        if ($account->wasChanged()) {
+            return redirect()->route('accounts.index')->with('success', 'Listings scheduled to drop.');
+        } else {
+            return redirect()->back()->with('error', 'Listings could not be scheduled.');
+        }
+    }
 }

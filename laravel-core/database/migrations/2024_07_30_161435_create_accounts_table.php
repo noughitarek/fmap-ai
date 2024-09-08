@@ -27,6 +27,8 @@ return new class extends Migration
             $table->integer('total_messages')->default(0);
             $table->integer('total_orders')->default(0);
 
+            $table->timestamp('drop_listings_at')->nullable();
+
             $table->foreignId('created_by')->constrained('users');
             $table->foreignId('updated_by')->nullable()->constrained('users');
             $table->foreignId('deleted_by')->nullable()->constrained('users');

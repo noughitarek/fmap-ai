@@ -7,6 +7,8 @@ use App\Models\Title;
 use App\Models\Account;
 use App\Models\Listing;
 use App\Models\Posting;
+use App\Models\Category;
+use App\Models\TagsGroup;
 use App\Models\Description;
 use App\Models\ListingsPhoto;
 use App\Models\PostingsPrices;
@@ -66,6 +68,9 @@ class MakeListingsSchedule extends Command
 
                         $title = Title::whereIn("id", $posting->titlesGroup->titles()->pluck("id"))->inRandomOrder()->first();
                         $price = PostingsPrices::whereIn("id", $posting->postingPrices()->pluck("id"))->inRandomOrder()->first();
+                        $category = Category::whereIn("id", $posting->categoriesGroup->categories()->pluck("id"))->inRandomOrder()->first();
+                        $tag = TagsGroup::whereIn("id", $posting->tagsGroup->pluck("id"))->inRandomOrder()->first();
+                        
                         if($title && $price)
                         {
                             $listing = Listing::create([
@@ -73,6 +78,8 @@ class MakeListingsSchedule extends Command
                                 "account_id" => $account->id,
                                 "title_id" => $title->id,
                                 "postings_price_id" => $price->id,
+                                "category_id" => $category->id,
+                                "tags_group_id" => $tag->id,
                                 "description_id" => $posting->descriptionsGroup?Description::whereIn("id", $posting->descriptionsGroup->descriptions()->pluck("id"))->inRandomOrder()->first()->id:null,
                                 "post_at" => now()->addMinutes(5),
                             ]);  

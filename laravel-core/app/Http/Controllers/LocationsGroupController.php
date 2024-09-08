@@ -149,7 +149,7 @@ class LocationsGroupController extends Controller
                 }
                 if (!empty($existingLocations)) {
                     Location::where('locations_group_id', $group->id)
-                        ->whereIn('location', array_keys($existingLocations))
+                        ->whereIn('commune_id', array_keys($existingLocations))
                         ->update([
                             "deleted_at" => now(),
                             "deleted_by" => Auth::user()->id
